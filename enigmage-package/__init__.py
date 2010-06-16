@@ -384,8 +384,3 @@ class Mages(pygame.sprite.LayeredUpdates):
 			self.update_positions()
 		#if self._central_node.predecessor: self.central_node = self._central_node.predecessor
 	# Noch eine Möglichkeit schaffen, dass ein Mage der Gruppe Bescheid sagen kann, wenn es become_fullscreen wird. Die anderen müssen dann so lange weg. Vielleicht bleibt es aber auch dabei, dass man sich einen Mage im Vollbild anschaut, indem man ganz reinzoomt und ihn als Hintergrund behält
-
-
-
-
-
