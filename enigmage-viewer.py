@@ -73,65 +73,6 @@ scrambled_eggs = enigmage.directory.MageDirNode(dir)
 meinesprites = enigmage.Mages(screen.get_rect(), scrambled_eggs)
 
 
-#bildname = "/home/turion/Fotos/2008.01.02.1007.Letzter Foto.JPG"
-#zaunkoenig = pygame.image.load(bildname).convert()
-#zaunsprite = enigmage.Mage(zaunkoenig, title="Zaunkönig")
-#zaunnode = enigtree.Node(zaunsprite)
-#
-#bildname = "/home/turion/Fotos/Best of/2008.01.01.0957.JPG"
-#glas = pygame.image.load(bildname).convert()
-#glassprite = enigmage.Mage(glas, title="Autoscheibe")
-#glasnode = enigtree.Node(glassprite, parent=zaunnode)
-#
-#bildname = "/home/turion/Fotos/Best of/2008.03.15.2959.JPG"
-#tobi = pygame.image.load(bildname).convert()
-#tobisprite = enigmage.Mage(tobi, title="Tobias")
-#tobinode = enigtree.Node(tobisprite, parent=zaunnode)
-#
-#bildname = "/home/turion/Fotos/Best of/2008.01.16.1375.JPG"
-#mond = pygame.image.load(bildname).convert()
-#mondsprite = enigmage.Mage(mond, title="Mondfinsternis")
-#mondnode = enigtree.Node(mondsprite, parent=tobinode)
-#
-#bildname = "/home/turion/Fotos/Best of/2008.03.15.2962.JPG"
-#fern = pygame.image.load(bildname).convert()
-#fernsprite = enigmage.Mage(fern, title="Fernglas")
-#fernnode = enigtree.Node(fernsprite, parent=tobinode)
-#
-#bildname = "/home/turion/Fotos/Best of/2008.04.05.3849.JPG"
-#miri = pygame.image.load(bildname).convert()
-#mirisprite = enigmage.Mage(miri, title="Miriam")
-#mirinode = enigtree.Node(mirisprite, parent = mondnode)
-
-#meinesprites = enigmage.Mages(screen.get_rect(), zaunnode)
-
-
-#def load_mage_node(path, title):
-	#image = pygame.image.load(path).convert()
-	#sprite = enigmage.Mage(image, title=title)
-	#node = enigtree.Node(sprite)
-	#return node
-	#
-#root = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.01.0583_sm.jpg', 'Flügel')
-#mauer = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.05.0818_sm.jpg', 'Mauer')
-#mauer.parent = root
-#kreuz = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.07.0895_sm.jpg', 'Kreuz')
-#kreuz.parent = root
-#lampen = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.07.0902_sm.jpg', 'Lampen')
-#lampen.parent = mauer
-#tempel = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.07.0906_sm.jpg', 'Tempel')
-#tempel.parent = kreuz
-#panzer = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.07.0926_sm.jpg', 'Panzer')
-#panzer.parent = kreuz
-#himmel = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.13.1026_sm.jpg', 'Himmel')
-#himmel.parent = panzer
- #= load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/', '')
- #= load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/', '')
- #= load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/', '')
- #= load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/', '')
-
-#meinesprites = enigmage.Mages(screen.get_rect(), root)
-
 enigmage.var.tick()
 loopcount = 0
 while True:
