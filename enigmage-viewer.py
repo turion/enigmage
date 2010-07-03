@@ -70,6 +70,9 @@ enigmage.init(screen)
 os.chdir('/')
 dir = '/home/turion/Fotos/selection enigmage'
 scrambled_eggs = enigmage.directory.MageDirNode(dir)
+
+print scrambled_eggs.elaborate_str()
+
 meinesprites = enigmage.Mages(screen.get_rect(), scrambled_eggs)
 
 

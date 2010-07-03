@@ -1,6 +1,9 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
+"""enigmage"""
+
+
 __ALL__ = [ 'directory' ]
 
 import pygame, math
@@ -79,9 +82,6 @@ def fit_surface_to_thumb(image, (width, height) = (None, None)):
 	#else return scale_surface_to_size(image, (width, height))
 	return fit_surface_to_size(image, (THUMB_WIDTH, THUMB_HEIGHT))
 
-
-def load_image():
-	pass
 
 class Mage(pygame.sprite.Sprite):
 	"""enigmage Image handler"""
