@@ -288,6 +288,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 			above = self.central_node.childs[middle_index+1:]
 			middle = self.central_node.childs[middle_index]
 			below = self.central_node.childs[:middle_index]
+			below.reverse()
 			print 'Mainline of ', self.central_node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
 			self._ramification_sub_line(middle, 0)
 			for node_index, node in enumerate(above): # enumerate(above) + enumerate(-1, below)
@@ -302,11 +303,12 @@ class Mages(pygame.sprite.LayeredUpdates):
 			above = node.childs[middle_index+1:]
 			middle = node.favourite_child
 			below = node.childs[:middle_index]
+			below.reverse()
 		else:
 			middle = node
 			above = node.childs
 			below = []
-		print "Subline at ", offset, " of ", node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
+		#~ print "Subline at ", offset, " of ", node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
 		if middle:
 			middle.data.goto((offset+self.drawrect.centerx,self.drawrect.centery)) 
 			for node_index, node in enumerate(above):
@@ -322,9 +324,8 @@ class Mages(pygame.sprite.LayeredUpdates):
 			self.add_mages(new=True)
 			self.calculate_positions()
 			self.update_positions()
-			return True
 		else:
-			return False
+			print "Warning: ", self.central_node, " has no attribute parent!"
 	def _ramification_zoom_in(self):
 		if self.central_node.childs:
 			self.central_node = self.central_node.childs[self._focussed_child]

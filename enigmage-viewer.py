@@ -75,8 +75,8 @@ print scrambled_eggs.elaborate_str()
 
 meinesprites = enigmage.Mages(screen.get_rect(), scrambled_eggs)
 #~ FIX:
-	#~ Bilder vertauschen Reihenfolge
-	#~ Man kommt nicht mehr raus
+	#~ When zooming in to fast, Mage does not immediately stop
+	#~ On zooming out, the Node forgets about which children it came from
 
 
 enigmage.var.tick()
