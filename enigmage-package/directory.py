@@ -9,8 +9,6 @@ import os, pygame, enigmage, enigtree, enigtree.directory
 debug_index = 0
 
 class MageDirNode(enigtree.directory.DirNode):
-	#~ def __init__(self, path, *args, **kwargs):
-		#~ enigtree.directory.DirNode.__init__(self, path, *args, **kwargs)
 	def init_data(self, *args, **kwargs):
 		global debug_index
 		debug_index = debug_index + 1
@@ -27,7 +25,9 @@ class MageDirNode(enigtree.directory.DirNode):
 	def child_accepted(self, child_path):
 		full_child_path = os.path.join(self.path, child_path)
 		return os.path.isdir(full_child_path) or (os.path.isfile(full_child_path) and child_path[-4:] in ('.JPG', '.jpg', 'jpeg', 'JPEG'))
-	#~ def sort_childs(self): # BROKEN
-		#~ childs_dirs = [child for child in self.childs if child.isdir].sort()
-		#~ childs_files = [child for child in self.childs if child.isfile].sort()
-		#~ print self.path, ": cd ", childs_dirs, " cf ", childs_files
+	def sort_childs(self):
+		childs_dirs = [child for child in self._childs if child.isdir]
+		childs_files = [child for child in self._childs if child.isfile]
+		childs_dirs.sort(key= lambda child:child.path)
+		childs_files.sort(key= lambda child:child.path)
+		self._childs = childs_dirs + childs_files

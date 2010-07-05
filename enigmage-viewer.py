@@ -74,6 +74,9 @@ scrambled_eggs = enigmage.directory.MageDirNode(dir)
 print scrambled_eggs.elaborate_str()
 
 meinesprites = enigmage.Mages(screen.get_rect(), scrambled_eggs)
+#~ FIX:
+	#~ Bilder vertauschen Reihenfolge
+	#~ Man kommt nicht mehr raus
 
 
 enigmage.var.tick()
