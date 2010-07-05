@@ -1,7 +1,8 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""Basic SQL functionalities. Hopefully this file will become backend independent."""
+"""enigmage.sql
+Basic SQL functionalities. Hopefully this file will become backend independent."""
 
 import sqlite3
 

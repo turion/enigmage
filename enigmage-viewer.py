@@ -67,28 +67,16 @@ screen = pygame.display.set_mode(size)
 
 enigmage.init(screen)
 
+os.chdir('/')
+dir = '/home/turion/Fotos/selection enigmage'
+scrambled_eggs = enigmage.directory.MageDirNode(dir)
 
-def load_mage_node(path, title):
-	image = pygame.image.load(path).convert()
-	sprite = enigmage.Mage(image, title=title)
-	node = enigtree.Node(sprite)
-	return node
-	
-root = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.01.0583_sm.jpg', 'Flügel')
-mauer = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.05.0818_sm.jpg', 'Mauer')
-mauer.parent = root
-kreuz = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.07.0895_sm.jpg', 'Kreuz')
-kreuz.parent = root
-lampen = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.07.0902_sm.jpg', 'Lampen')
-lampen.parent = mauer
-tempel = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.07.0906_sm.jpg', 'Tempel')
-tempel.parent = kreuz
-panzer = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.07.0926_sm.jpg', 'Panzer')
-panzer.parent = kreuz
-himmel = load_mage_node('/home/turion/Fotos/selection kalender/internet mirror/2007.07.13.1026_sm.jpg', 'Himmel')
-himmel.parent = panzer
+print scrambled_eggs.elaborate_str()
 
-meinesprites = enigmage.Mages(screen.get_rect(), root)
+meinesprites = enigmage.Mages(screen.get_rect(), scrambled_eggs)
+#~ FIX:
+	#~ When zooming in to fast, Mage does not immediately stop
+	#~ On zooming out, the Node forgets about which children it came from
 
 enigmage.var.tick()
 loopcount = 0
