@@ -68,10 +68,19 @@ screen = pygame.display.set_mode(size)
 enigmage.init(screen)
 
 os.chdir('/')
-dir = '/home/turion/Fotos/selection enigmage'
+dir = os.path.expanduser('~') + '/'
+settings_file_path = os.path.join(dir, '.enigmage')
+if os.path.exists(settings_file_path):
+	if os.path.isfile(settings_file_path):
+		settings_file = open(settings_file_path)
+		dir = settings_file.readline()
+	else:
+		print "You messed up with .enigmage!"
+else:
+	print "Please create .enigmage!"
+	
 scrambled_eggs = enigmage.directory.MageDirNode(dir)
 
-print scrambled_eggs.elaborate_str()
 
 meinesprites = enigmage.Mages(screen.get_rect(), scrambled_eggs)
 #~ FIX:
