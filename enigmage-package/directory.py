@@ -12,13 +12,11 @@ class MageDirNode(enigtree.directory.DirNode):
 	def init_data(self, *args, **kwargs):
 		global debug_index
 		debug_index = debug_index + 1 # Warning if too many Mages are being loaded
-		print "Loading ", self.path
+		#~ print "Loading ", self.path
 		if self.isfile:
 			image = pygame.image.load(self.path).convert()
-			print "File"
 		else:
 			image = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
-			print "Folder"
 		mage = enigmage.Mage(image, title=self.path)
 		if debug_index > 100:
 			#~ raise Exception

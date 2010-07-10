@@ -71,23 +71,31 @@ import os, sys, pygame, pygame.sprite
 
 pygame.init()
 
-size = 1024, 768
-maxbildversize = 300
-screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
-
-enigmage.init(screen)
-
 os.chdir('/')
 dir = os.path.expanduser('~') + '/'
 settings_file_path = os.path.join(dir, '.enigmage')
 if os.path.exists(settings_file_path):
 	if os.path.isfile(settings_file_path):
-		settings_file = open(settings_file_path)
-		dir = settings_file.readline()
+		with open(settings_file_path) as settings_file:
+			dir = settings_file.readline()[:-1]
+			fullscreen = settings_file.readline()
 	else:
 		print "You messed up with .enigmage!"
 else:
 	print "Please create .enigmage!"
+	
+
+maxbildversize = 300
+
+if fullscreen == 'yes':
+	size = 1024, 768
+	screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+else:
+	size = 800, 600
+	screen = pygame.display.set_mode(size)
+
+enigmage.init(screen)
+
 	
 scrambled_eggs = enigmage.directory.MageDirNode(dir)
 
