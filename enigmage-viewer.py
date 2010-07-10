@@ -71,9 +71,9 @@ import os, sys, pygame, pygame.sprite
 
 pygame.init()
 
-size = 800, 600
+size = 1024, 768
 maxbildversize = 300
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 
 enigmage.init(screen)
 
