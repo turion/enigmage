@@ -224,10 +224,13 @@ class Mage(pygame.sprite.Sprite):
 		else: show_image = self.fullscreen
 		self.assign_image(fit_surface_to_size(show_image, (width, height)))
 	def become_thumb(self):
+		self._show_as_fullscreen = False
+		self._goingto = True
 		self.assign_image(self.thumb)
 		self._update_rect_to_target()
 	def become_fullscreen(self):
 		if not self._show_as_fullscreen:
+			self._show_as_fullscreen = True
 			self.assign_image(self.fullscreen)
 			self._goingto = False
 			self.rect.center = self._drawrect.center
@@ -235,11 +238,9 @@ class Mage(pygame.sprite.Sprite):
 	def toggle_fullscreen(self):
 		if self._show_as_fullscreen:
 			#print "Becoming thumb"
-			self._show_as_fullscreen = False
 			self.become_thumb()
 		else:
 			#print "Becoming fullscreen"
-			self._show_as_fullscreen = True
 			self.become_fullscreen()
 	
 

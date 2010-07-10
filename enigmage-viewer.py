@@ -24,9 +24,18 @@ Aktuell:
 4a. Dateiverwaltung
 	Via Nodes...
 		Unterklassen davon, die tatsächlich etwas können, z.B. SQL, Dateisystem
+			"SQLMageNode" oder so durch und durch Objektorientiert
+				SQL-Daten nicht in data ablegen wegen Seit-/Abwärtskompatibilität
+				Alchemy richtig in den Griff kriegen
 		Selbstständiger DirectoryNode
 		Davon eine Unterklasse, die automatisch die Mages lädt?
-	os.path verwenden
+			Es fehlt noch Schreibzugriff
+
+7. Performance verbessern
+		Multithreading
+			Hintergrundprozess, der Thumbs erstellt und Bilder vorlädt usw.
+				Den braucht man jetzt schon, damit es benutzbar wird
+
 
 Noch zu tun:
 4a. Dateiverwaltung
@@ -36,9 +45,10 @@ Noch zu tun:
 			Hierarchie der Tags über tag_hierarchy ist mengenartig (ein Tag kann mehrere Übertags haben) und ausschließlich direkt (nicht transitiv: Tag3 Übertag für Tag2 und Tag 2 Übertag für Tag1 führt nicht dazu, dass Tag3 Übertag für Tag1. Man kann diese Struktur aber trotzdem baumartig benutzen.)
 			Tagzugehörigkeit wird durch Coupling quantifiziert
 				Rating geschieht durch Tags (z.B. tag "kalenderhaft", "gut", "überbelichtet") und coupling
-
 5. Alles zusammenstecken
 		Gedanken wegen Packages machen, vielleicht main() implementieren
+		Einstellungsdatei ausbauen
+			Die Einstellungsdatei sollte eine normale Pythondatei sein, die auf globale Variablen in enigmage-viewer.py zugreifen kann
 6. Praktische Funktionen einbauen/ Eyecandy
 		"Einsortieren": Zwei Gruppen, eine links im halben Fullscreen die neuen Fotos durchblätternd, die rechts in einen Baum einsortiert werden
 		MageLabelled
