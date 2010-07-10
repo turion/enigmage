@@ -266,11 +266,11 @@ class Mages(pygame.sprite.LayeredUpdates):
 	def _ramification_add_mages(self, new=False): # Der Hack mit new ist noch unschön.
 		temp_group = pygame.sprite.Group(self.sprites()) # Hier alle eben angezeigten Sprites rein
 		self.empty()
-		print "Adding :"
-		print self.central_node
+		#~ print "Adding :"
+		#~ print self.central_node
 		self.add(self.central_node.data)
 		for node in self.central_node.progeny(2):
-			print node
+			#~ print node
 			self.add(node.data)
 			if not temp_group.has(node.data):
 				node.data.beamto(self.drawrect.center)
@@ -283,14 +283,12 @@ class Mages(pygame.sprite.LayeredUpdates):
 		#if self.central_node.favourite_child:
 			#middle_index = self.central_node.childs.index(self.central_node.favourite_child)
 		#else:
-		middle_index = self._focussed_child
-		print "middle_index = ", middle_index, " central node childs = ", [str(node) for node in self.central_node.childs]
 		if self.central_node.childs:
 			above = self.central_node.childs[middle_index+1:]
 			middle = self.central_node.childs[middle_index]
 			below = self.central_node.childs[:middle_index]
 			below.reverse()
-			print 'Mainline of ', self.central_node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
+			#~ print 'Mainline of ', self.central_node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
 			self._ramification_sub_line(middle, 0)
 			for node_index, node in enumerate(above): # enumerate(above) + enumerate(-1, below)
 				self._ramification_sub_line(node, (1+node_index) * (THUMB_WIDTH + THUMB_SEPARATOR))
@@ -300,6 +298,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 		#sub_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible
 		# Favourite child in die Mitte, ansonsten Mitte nach oben
 		if node.favourite_child:
+			self.remove(node.data)
 			middle_index = node.childs.index(node.favourite_child)
 			above = node.childs[middle_index+1:]
 			middle = node.favourite_child
@@ -320,8 +319,9 @@ class Mages(pygame.sprite.LayeredUpdates):
 		self._ramification_main_line()
 	def _ramification_zoom_out(self):
 		if self.central_node.parent:
+			self.central_node.parent.favourite_child = self.central_node
 			self.central_node = self.central_node.parent
-			print "Zooming out to ", self.central_node
+			#~ print "Zooming out to ", self.central_node
 			self.add_mages(new=True)
 			self.calculate_positions()
 			self.update_positions()
@@ -330,7 +330,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 	def _ramification_zoom_in(self):
 		if self.central_node.childs:
 			self.central_node = self.central_node.childs[self._focussed_child]
-			print "Zooming in to ", self.central_node
+			#~ print "Zooming in to ", self.central_node
 			self.add_mages(new=True)
 			self.calculate_positions()
 			self.update_positions()
@@ -375,14 +375,25 @@ class Mages(pygame.sprite.LayeredUpdates):
 			#self.calculate_positions() # Sprites zur Gruppe hinzufügen, Positionen berechnen, die in drawrect reinpassen
 			#self.update_positions() # Sprites an die Positionen verschieben
 	def focus_right(self):
-		if self.central_node.childs and self._focussed_child < len(self.central_node.childs)-1:
-			self._focussed_child += 1
-			self.calculate_positions()
-			self.update_positions()
+		if self.central_node.childs: # Means that thumbs are floating in front, central_node is background
+			if self._focussed_child < len(self.central_node.childs)-1:
+				self._focussed_child += 1
+				self.calculate_positions()
+				self.update_positions()
+		else: # No thumbs are floating in front, central_node is foreground
+			if self.central_node.successor:
+				self.zoom_out()
+				self.focus_right() # This is NOT a recursion because when zoomed out, self.central_node will have childs
+				self.zoom_in()
 	def focus_left(self):
-		if self.central_node.childs and self._focussed_child > 0:
-			self._focussed_child -= 1
-			self.calculate_positions()
-			self.update_positions()
-		#if self._central_node.predecessor: self.central_node = self._central_node.predecessor
+		if self.central_node.childs:
+			if self._focussed_child > 0:
+				self._focussed_child -= 1
+				self.calculate_positions()
+				self.update_positions()
+		else:
+			if self.central_node.predecessor:
+				self.zoom_out()
+				self.focus_left() # This is NOT a recursion because when zoomed out, self.central_node will have childs
+				self.zoom_in()
 	# Noch eine Möglichkeit schaffen, dass ein Mage der Gruppe Bescheid sagen kann, wenn es become_fullscreen wird. Die anderen müssen dann so lange weg. Vielleicht bleibt es aber auch dabei, dass man sich einen Mage im Vollbild anschaut, indem man ganz reinzoomt und ihn als Hintergrund behält
