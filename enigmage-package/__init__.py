@@ -280,13 +280,11 @@ class Mages(pygame.sprite.LayeredUpdates):
 	def _ramification_main_line(self):
 		#main_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible
 		
-		#if self.central_node.favourite_child:
-			#middle_index = self.central_node.childs.index(self.central_node.favourite_child)
-		#else:
+		
 		if self.central_node.childs:
-			above = self.central_node.childs[middle_index+1:]
-			middle = self.central_node.childs[middle_index]
-			below = self.central_node.childs[:middle_index]
+			above = self.central_node.childs[self._focussed_child+1:]
+			middle = self.central_node.childs[self._focussed_child]
+			below = self.central_node.childs[:self._focussed_child]
 			below.reverse()
 			#~ print 'Mainline of ', self.central_node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
 			self._ramification_sub_line(middle, 0)
