@@ -254,7 +254,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 		self._central_node = None
 		self._focussed_child = 0
 		self.central_node = node
-		self._showmodes = { "ramification": (self._ramification_add_mages, self._ramification_calculate_positions, self._ramification_update_positions, self._ramification_zoom_in, self._ramification_zoom_out) }
+		self._showmodes = { "ramification": (self._ramification_add_mages, self._ramification_calculate_positions, self._ramification_update_positions, self._ramification_zoom_in, self._ramification_zoom_out), "tree": (self._tree_add_mages, self._tree_calculate_positions, self._tree_update_positions, self._tree_zoom_in, self._tree_zoom_out) }
 		self.showmode = showmode
 		self.add_mages(new=True)
 		self.calculate_positions() # Sprites zur Gruppe hinzufügen, Positionen berechnen, die in drawrect reinpassen
@@ -335,6 +335,16 @@ class Mages(pygame.sprite.LayeredUpdates):
 			return True
 		else:
 			return False
+	def _tree_add_mages(self):
+		pass
+	def _tree_calculate_positions(self):
+		pass
+	def _tree_update_positions(self):
+		pass
+	def _tree_zoom_in(self):
+		pass
+	def _tree_zoom_out(self):
+		pass
 	def add_mages(self):
 		pass
 	def calculate_positions(self):
