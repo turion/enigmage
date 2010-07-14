@@ -114,8 +114,8 @@ while True:
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE: sys.exit()
-			if event.key == pygame.K_RIGHT: meinesprites.focus_right()
-			if event.key == pygame.K_LEFT: meinesprites.focus_left()
+			if event.key == pygame.K_RIGHT: meinesprites.focus_successor()
+			if event.key == pygame.K_LEFT: meinesprites.focus_predecessor()
 			if event.key == pygame.K_DOWN: meinesprites.zoom_in()
 			if event.key == pygame.K_UP: meinesprites.zoom_out()
 	# events.pump oder so?

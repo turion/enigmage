@@ -382,7 +382,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 			#self.add_mages(new=True)
 			#self.calculate_positions() # Sprites zur Gruppe hinzufügen, Positionen berechnen, die in drawrect reinpassen
 			#self.update_positions() # Sprites an die Positionen verschieben
-	def focus_right(self):
+	def focus_successor(self):
 		if self.central_node.childs: # Means that thumbs are floating in front, central_node is background
 			if self._focussed_child < len(self.central_node.childs)-1:
 				self._focussed_child += 1
@@ -391,9 +391,9 @@ class Mages(pygame.sprite.LayeredUpdates):
 		else: # No thumbs are floating in front, central_node is foreground
 			if self.central_node.successor:
 				self.zoom_out()
-				self.focus_right() # This is NOT a recursion because when zoomed out, self.central_node will have childs
+				self.focus_successor() # This is NOT a recursion because when zoomed out, self.central_node will have childs
 				self.zoom_in()
-	def focus_left(self):
+	def focus_predecessor(self):
 		if self.central_node.childs:
 			if self._focussed_child > 0:
 				self._focussed_child -= 1
@@ -402,6 +402,6 @@ class Mages(pygame.sprite.LayeredUpdates):
 		else:
 			if self.central_node.predecessor:
 				self.zoom_out()
-				self.focus_left() # This is NOT a recursion because when zoomed out, self.central_node will have childs
+				self.focus_predecessor() # This is NOT a recursion because when zoomed out, self.central_node will have childs
 				self.zoom_in()
 	# Noch eine Möglichkeit schaffen, dass ein Mage der Gruppe Bescheid sagen kann, wenn es become_fullscreen wird. Die anderen müssen dann so lange weg. Vielleicht bleibt es aber auch dabei, dass man sich einen Mage im Vollbild anschaut, indem man ganz reinzoomt und ihn als Hintergrund behält
