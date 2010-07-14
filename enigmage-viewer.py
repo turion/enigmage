@@ -35,6 +35,8 @@ Aktuell:
 		Multithreading
 			Hintergrundprozess, der Thumbs erstellt und Bilder vorlädt usw.
 				Den braucht man jetzt schon, damit es benutzbar wird
+		Nur die Mages anzeigen, die im Bildbereich sind!
+			Am besten diese Funktion schon in Mages einbauen? Das wird kompliziert!
 
 
 Noch zu tun:
@@ -100,7 +102,7 @@ enigmage.init(screen)
 scrambled_eggs = enigmage.directory.MageDirNode(dir)
 
 
-meinesprites = enigmage.Mages(screen.get_rect(), scrambled_eggs)
+meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)
 #~ FIX:
 	#~ When zooming in to fast, Mage does not immediately stop
 	#~ On zooming out, the Node forgets about which children it came from

@@ -244,122 +244,43 @@ class Mage(pygame.sprite.Sprite):
 			self.become_fullscreen()
 	
 
+
+
 class Mages(pygame.sprite.LayeredUpdates):
-	"""Inherits LayeredUpdate. It draws some thumbs on a curve and can shift them along as well as show the middle Mage in fullscreen."""
-	_showmode = "ramification"
-	def __init__(self, drawrect, node, showmode="ramification"):
+	"""Inherits LayeredUpdate. Inherited classes display the mages that are found in the tree rooted at central_node in a specific way."""
+	def __init__(self, drawrect, node):
 		"""node has to be enigtree.Node and contain enigmage.Mage as data."""
 		pygame.sprite.LayeredUpdates.__init__(self) # Die Mage werden von calculate_positions eingewiesen
 		self.drawrect = drawrect
-		self._central_node = None
+
 		self._focussed_child = 0
+		self._central_node = None
 		self.central_node = node
-		self._showmodes = { "ramification": (self._ramification_add_mages, self._ramification_calculate_positions, self._ramification_update_positions, self._ramification_zoom_in, self._ramification_zoom_out), "tree": (self._tree_add_mages, self._tree_calculate_positions, self._tree_update_positions, self._tree_zoom_in, self._tree_zoom_out) }
-		self.showmode = showmode
-		self.add_mages(new=True)
+
+		self.add_mages()
 		self.calculate_positions() # Sprites zur Gruppe hinzufügen, Positionen berechnen, die in drawrect reinpassen
 		self.update_positions() # Sprites an die Positionen verschieben
 
-	#def add(self, *sprites, **kwargs):
-		#pygame.sprite.LayeredUpdates.add(self, *sprites, **kwargs)
-		# Vielleicht Platz zuweisen, in **kwargs oder sprites._show_as_fullscreen schauen, ob er fullscreen will
-	def _ramification_add_mages(self, new=False): # Der Hack mit new ist noch unschön.
-		temp_group = pygame.sprite.Group(self.sprites()) # Hier alle eben angezeigten Sprites rein
-		self.empty()
-		#~ print "Adding :"
-		#~ print self.central_node
-		self.add(self.central_node.data)
-		for node in self.central_node.progeny(2):
-			#~ print node
-			self.add(node.data)
-			if not temp_group.has(node.data):
-				node.data.beamto(self.drawrect.center)
-	def _ramification_calculate_positions(self):
-		pass
-		# Das Berechnen wird im Moment noch von update gemacht
-	def _ramification_main_line(self):
-		#main_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible
-		
-		
-		if self.central_node.childs:
-			above = self.central_node.childs[self._focussed_child+1:]
-			middle = self.central_node.childs[self._focussed_child]
-			below = self.central_node.childs[:self._focussed_child]
-			below.reverse()
-			#~ print 'Mainline of ', self.central_node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
-			self._ramification_sub_line(middle, 0)
-			for node_index, node in enumerate(above): # enumerate(above) + enumerate(-1, below)
-				self._ramification_sub_line(node, (1+node_index) * (THUMB_WIDTH + THUMB_SEPARATOR))
-			for node_index, node in enumerate(below):
-				self._ramification_sub_line(node, -(1+node_index) * (THUMB_WIDTH + THUMB_SEPARATOR))
-	def _ramification_sub_line(self, node, offset):
-		#sub_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible
-		# Favourite child in die Mitte, ansonsten Mitte nach oben
-		if node.favourite_child:
-			self.remove(node.data)
-			middle_index = node.childs.index(node.favourite_child)
-			above = node.childs[middle_index+1:]
-			middle = node.favourite_child
-			below = node.childs[:middle_index]
-			below.reverse()
-		else:
-			middle = node
-			above = node.childs
-			below = []
-		#~ print "Subline at ", offset, " of ", node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
-		if middle:
-			middle.data.goto((offset+self.drawrect.centerx,self.drawrect.centery)) 
-			for node_index, node in enumerate(above):
-				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery - (1+node_index) * (THUMB_HEIGHT + THUMB_SEPARATOR)))
-			for node_index, node in enumerate(below):
-				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery + (1+node_index) * (THUMB_HEIGHT + THUMB_SEPARATOR)))
-	def _ramification_update_positions(self):
-		self._ramification_main_line()
-	def _ramification_zoom_out(self):
-		if self.central_node.parent:
-			self.central_node.parent.favourite_child = self.central_node
-			self.central_node = self.central_node.parent
-			#~ print "Zooming out to ", self.central_node
-			self.add_mages(new=True)
-			self.calculate_positions()
-			self.update_positions()
-		else:
-			print "Warning: ", self.central_node, " has no attribute parent!"
-	def _ramification_zoom_in(self):
-		if self.central_node.childs:
-			self.central_node = self.central_node.childs[self._focussed_child]
-			#~ print "Zooming in to ", self.central_node
-			self.add_mages(new=True)
-			self.calculate_positions()
-			self.update_positions()
-			return True
-		else:
-			return False
-	def _tree_add_mages(self):
-		pass
-	def _tree_calculate_positions(self):
-		pass
-	def _tree_update_positions(self):
-		pass
-	def _tree_zoom_in(self):
-		pass
-	def _tree_zoom_out(self):
-		pass
+	def relevant_nodes(self):
+		return []
 	def add_mages(self):
-		pass
+		#~ temp_group = pygame.sprite.Group(self.sprites())
+		self.empty()
+		for node in self.relevant_nodes():
+			self.add(node.data)
+			#~ if not temp_group.has(node.data):
+				#~ node.data.beamto(self.drawrect.center)
 	def calculate_positions(self):
+		"""To be inherited to actually display something."""
 		pass
 	def update_positions(self):
-		pass
-	def zoom_in(self):
-		pass
-	def zoom_out(self):
+		"""To be inherited to actually display something."""
 		pass
 	@property
 	def central_node(self):
 		return self._central_node # Internally, _central_node is used
 	@central_node.setter
-	def central_node(self, node, new=False):
+	def central_node(self, node):
 		if self.central_node:
 			self.central_node.data.become_thumb()
 		self._central_node = node
@@ -368,20 +289,29 @@ class Mages(pygame.sprite.LayeredUpdates):
 			self._focussed_child = self.central_node.childs.index(self.central_node.favourite_child)
 		else:
 			self._focussed_child = 0
-		#self.add_mages(new)
+		#self.add_mages()
 		#self.calculate_positions() # Positionen berechnen, die in drawrect reinpassen
 		#self.update_positions() # Sprites an die Positionen verschieben
-	@property
-	def showmode(self):
-		return self._showmode
-	@showmode.setter
-	def showmode(self, showmode):
-		if showmode in self._showmodes.keys():
-			self._showmode = showmode
-			(self.add_mages, self.calculate_positions, self.update_positions, self.zoom_in, self.zoom_out) = self._showmodes[showmode]
-			#self.add_mages(new=True)
-			#self.calculate_positions() # Sprites zur Gruppe hinzufügen, Positionen berechnen, die in drawrect reinpassen
-			#self.update_positions() # Sprites an die Positionen verschieben
+	def zoom_in(self):
+		if self.central_node.childs:
+			self.central_node = self.central_node.childs[self._focussed_child]
+			#~ print "Zooming in to ", self.central_node
+			self.add_mages()
+			self.calculate_positions()
+			self.update_positions()
+			return True
+		else:
+			return False
+	def zoom_out(self):
+		if self.central_node.parent:
+			self.central_node.parent.favourite_child = self.central_node
+			self.central_node = self.central_node.parent
+			#~ print "Zooming out to ", self.central_node
+			self.add_mages()
+			self.calculate_positions()
+			self.update_positions()
+		else:
+			print "Warning: ", self.central_node, " has no attribute parent!"
 	def focus_successor(self):
 		if self.central_node.childs: # Means that thumbs are floating in front, central_node is background
 			if self._focussed_child < len(self.central_node.childs)-1:
@@ -405,3 +335,47 @@ class Mages(pygame.sprite.LayeredUpdates):
 				self.focus_predecessor() # This is NOT a recursion because when zoomed out, self.central_node will have childs
 				self.zoom_in()
 	# Noch eine Möglichkeit schaffen, dass ein Mage der Gruppe Bescheid sagen kann, wenn es become_fullscreen wird. Die anderen müssen dann so lange weg. Vielleicht bleibt es aber auch dabei, dass man sich einen Mage im Vollbild anschaut, indem man ganz reinzoomt und ihn als Hintergrund behält
+
+
+
+class RamificationMages(Mages):
+	def relevant_nodes(self):
+		return [self.central_node] + self.central_node.progeny(2)
+	def _main_line(self):
+		#main_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible	
+		if self.central_node.childs:
+			above = self.central_node.childs[self._focussed_child+1:]
+			middle = self.central_node.childs[self._focussed_child]
+			below = self.central_node.childs[:self._focussed_child]
+			below.reverse()
+			#~ print 'Mainline of ', self.central_node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
+			self._sub_line(middle, 0)
+			for node_index, node in enumerate(above): # enumerate(above) + enumerate(-1, below)
+				self._sub_line(node, (1+node_index) * (THUMB_WIDTH + THUMB_SEPARATOR))
+			for node_index, node in enumerate(below):
+				self._sub_line(node, -(1+node_index) * (THUMB_WIDTH + THUMB_SEPARATOR))
+	update_positions = _main_line
+	def _sub_line(self, node, offset):
+		#sub_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible
+		# Favourite child in die Mitte, ansonsten Mitte nach oben
+		if node.favourite_child:
+			self.remove(node.data)
+			middle_index = node.childs.index(node.favourite_child)
+			above = node.childs[middle_index+1:]
+			middle = node.favourite_child
+			below = node.childs[:middle_index]
+			below.reverse()
+		else:
+			middle = node
+			above = node.childs
+			below = []
+		#~ print "Subline at ", offset, " of ", node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
+		if middle:
+			middle.data.goto((offset+self.drawrect.centerx,self.drawrect.centery)) 
+			for node_index, node in enumerate(above):
+				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery - (1+node_index) * (THUMB_HEIGHT + THUMB_SEPARATOR)))
+			for node_index, node in enumerate(below):
+				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery + (1+node_index) * (THUMB_HEIGHT + THUMB_SEPARATOR)))
+
+class TreeMages(Mages):
+	pass
