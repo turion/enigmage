@@ -69,7 +69,7 @@ Noch zu tun:
 
 import enigmage, enigtree, enigmage.directory
 
-import os, sys, pygame, pygame.sprite
+import os, sys, pygame
 
 pygame.init()
 
@@ -103,9 +103,6 @@ scrambled_eggs = enigmage.directory.MageDirNode(dir)
 
 
 meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)
-#~ FIX:
-	#~ When zooming in to fast, Mage does not immediately stop
-	#~ On zooming out, the Node forgets about which children it came from
 
 enigmage.var.tick()
 loopcount = 0
