@@ -113,45 +113,36 @@ class Mage(pygame.sprite.Sprite):
 		self.thumb = fit_surface_to_thumb(raw_thumb)
 		
 		self._raw_image = raw_image
+		
 		if drawrect == None:
 			drawrect = var.screen_rect
-		self.assign_drawrect(drawrect)
+		self.drawrect = drawrect
 
-		try:
-			self._movetarget((target_x, target_y))
-		except TypeError: 
-			#print "Bad or no parameters target_x, target_y to Mage.__init__(...). Defaulting to the middle of the drawrect (could be the screen)."
+		if target_x == None or target_y == None: 
 			self._movetarget((self._drawrect.centerx,self._drawrect.centery))
+		else:
+			self._movetarget((target_x, target_y))
 		
-		self._show_as_fullscreen = show_as_fullscreen
-		if self._show_as_fullscreen:
+		if _show_as_fullscreen:
 			self.become_fullscreen()
 		else: # Supposed to be shown as a thumb
 			self.become_thumb()
-	def assign_image(self, image, rect=None):
-		"""Has to be called before the mage can be shown or the rect of it accessed. Might include a clipping rect in the future."""
-		if rect == None: rect = image.get_rect()
-		self.image, self.rect = image, rect
+	@property
+	def image(self):
+		return self._image
+	@image.setter
+	def image(self, image):
+		"""Has to be set before the mage can be shown or the rect of it accessed. Might somehow include a clipping rect in the future."""
+		rect = image.get_rect()
+		self._image, self.rect = image, rect
 		self._update_rect_to_target()
-	def assign_drawrect(self, drawrect):
+	@property
+	def drawrect(self):
+		return self._drawrect
+	@drawrect.setter
+	def drawrect(self, drawrect):
 		self._drawrect = drawrect
 		self.fullscreen = fit_surface_to_size(self._raw_image, (self._drawrect.width, self._drawrect.height))
-	def right(self):
-		self._velocity += self._velstep
-	def left(self):
-		self._velocity -= self._velstep
-	def up(self):
-		self._velocity -= self._velstep * 1.0j
-	def down(self):
-		self._velocity += self._velstep * 1.0j
-	#def right(self): # 10 Pixel pro Tastendruck
-		#self._move += self._movestep
-	#def left(self):
-		#self._move -= self._movestep
-	#def up(self):
-		#self._move -= self._movestep * 1.0j
-	#def down(self):
-		#self._move += self._movestep * 1.0j
 	def _movetarget(self, (target_x, target_y)):
 		self._target = target_x + target_y * 1.0j
 	def _update_rect_to_target(self):
@@ -218,20 +209,15 @@ class Mage(pygame.sprite.Sprite):
 		#if self._blowing > 1: self._blowing = 0
 		
 		#if not self._drawrect.colliderect(self.rect): print '"MAMA! Bin weg!" - Dieser Hilferuf kam von ', self, '. Er befindet sich gerade bei ', self.rect.center, '.'
-	def _setsize(self, (width, height)):
-		"""Manually set the shown image to a resized thumb or fullscreen"""
-		if self._thumb: show_image = self.thumb
-		else: show_image = self.fullscreen
-		self.assign_image(fit_surface_to_size(show_image, (width, height)))
 	def become_thumb(self):
 		self._show_as_fullscreen = False
 		self._goingto = True
-		self.assign_image(self.thumb)
+		self.image = self.thumb
 		self._update_rect_to_target()
 	def become_fullscreen(self):
 		if not self._show_as_fullscreen:
 			self._show_as_fullscreen = True
-			self.assign_image(self.fullscreen)
+			self.image = self.fullscreen
 			self._goingto = False
 			self.rect.center = self._drawrect.center
 		# Der Gruppe bescheid sagen!
