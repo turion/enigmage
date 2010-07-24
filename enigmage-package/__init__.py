@@ -22,7 +22,7 @@ def halleluja():
 
 class Var():
 	"""Holds various important global variables for the whole enigmage"""
-	def __init__(self, screen = None):
+	def __init__(self, screen = None, max_fps=40):
 		if screen == None:
 			size = 800, 600
 			self.screen = pygame.display.set_mode(size)
@@ -30,12 +30,13 @@ class Var():
 		self.background = pygame.Surface(self.screen.get_size()).convert()
 		self.background.fill((0,0,0))
 		self._ticking = 0
+		self.max_fps = max_fps
 		self.background = pygame.Surface(self.screen.get_size()).convert()
 		self.background.fill((0,0,0))
 		self.screen_rect = self.screen.get_rect()
 	def tick(self): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
 		if self._ticking:
-			self.time = self.clock.tick(40)
+			self.time = self.clock.tick(self.max_fps)
 		else:
 			self._ticking = 1
 			self.clock = pygame.time.Clock()
@@ -123,7 +124,7 @@ class Mage(pygame.sprite.Sprite):
 		else:
 			self._movetarget((target_x, target_y))
 		
-		if _show_as_fullscreen:
+		if show_as_fullscreen:
 			self.become_fullscreen()
 		else: # Supposed to be shown as a thumb
 			self.become_thumb()
