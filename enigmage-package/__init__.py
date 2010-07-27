@@ -53,11 +53,17 @@ def init(screen):
 #def image with thumb
 # return image, thumb
 
+def perfect_fit(width1, height1, width2, height2):
+	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
 
 def scale_surface_to_size(image, (width, height)):
 	"""Creates a new surface scaled to width x height. Currently only a wrapper for pygame.transform.scale, but could be replaced for something faster in the future"""
-	scaled_image = pygame.transform.scale(image, (width, height))
-	return scaled_image
+	if (image.get_width(), image.get_height()) == (width, height): # Do not resize if the size is alread correct
+		return image
+	else:
+		print "I have to resize something to", width, height
+		scaled_image = pygame.transform.scale(image, (width, height))
+		return scaled_image
 
 def scale_surface_to_height(image, height):
 	"""Creates a new surface with the given height. Height and width are both rounded to an integer value, so float arguments are allowed."""
@@ -103,21 +109,25 @@ class Mage(pygame.sprite.Sprite):
 		#if self._title: str += ' "' + self._title + '"'
 		#return str
 		return self._title
-	def __init__(self, raw_image, raw_thumb=None, drawrect=None, show_as_fullscreen=False, target_x = None, target_y = None, title=None):
+	def __init__(self, raw_image, raw_thumb=None, raw_fullscreen=None, drawrect=None, show_as_fullscreen=False, target_x = None, target_y = None, title=None):
 		"""raw_image contains all image information. For future performance enhancement it is possible to give thumb and fullscreen images as arguments."""
 		pygame.sprite.Sprite.__init__(self)
 		
 		if title: self._title = title
 		
+		self._raw_image = raw_image
+
 		if raw_thumb == None:
 			raw_thumb = raw_image
 		self.thumb = fit_surface_to_thumb(raw_thumb)
 		
-		self._raw_image = raw_image
-		
+		if raw_fullscreen == None:
+			raw_fullscreen = raw_image
+		self.fullscreen = raw_fullscreen
+				
 		if drawrect == None:
 			drawrect = var.screen_rect
-		self.drawrect = drawrect
+		self.drawrect = drawrect # Resizes self.fullscreen
 
 		if target_x == None or target_y == None: 
 			self._movetarget((self._drawrect.centerx,self._drawrect.centery))
@@ -143,14 +153,28 @@ class Mage(pygame.sprite.Sprite):
 	@drawrect.setter
 	def drawrect(self, drawrect):
 		self._drawrect = drawrect
-		self.fullscreen = fit_surface_to_size(self._raw_image, (self._drawrect.width, self._drawrect.height))
+		self.fullscreen = self._raw_fullscreen # Resizing is done by the property
+	@property
+	def thumb(self):
+		return self._thumb
+	@thumb.setter
+	def thumb(self, thumb):
+		thumb = fit_surface_to_thumb(thumb) # Does not resize if the size is alread correct
+		self._thumb = thumb
+	@property
+	def fullscreen(self):
+		return self._fullscreen
+	@fullscreen.setter
+	def fullscreen(self, fullscreen):
+		fullscreen = fit_surface_to_size(fullscreen, (self.drawrect.width, self.drawrect.height))  # Does not resize if the size is alread correct
+		self._fullscreen = fullscreen
 	def _movetarget(self, (target_x, target_y)):
 		self._target = target_x + target_y * 1.0j
 	def _update_rect_to_target(self):
 		if not self._show_as_fullscreen:
 			self.rect.centerx, self.rect.centery = int(round(self._target.real)), int(round(self._target.imag))
 	def beamto(self, (target_x, target_y)):
-		#print self, " is beaming to (", target_x, ", ", target_y, ")"
+		#print self, " is beaming to (", target_x, ",", target_y, ")"
 		"""Moves _target and subsequently the rect. Accepts float arguments"""
 		try:
 			self._movetarget((target_x, target_y))

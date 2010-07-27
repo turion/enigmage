@@ -1,99 +1,56 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-import multiprocessing, pygame.time
+import enigmage.job, enigmage.directory, enigmage
+import Image
 
-class Job(object):
-	def __init__(self, *args, **kwargs):
-		self.dict = {}
-		self.dict.update(kwargs)
-	
-class PriorityJob(Job):
-	"""A priority of 0 is the standard, default value. Higher priorities correspond to higher numbers. The comparisons < and > are implemented to directly compare the priorities. The operator == does *not* compare priorities but still checks, if the jobs are the same instance."""
-	def __init__(self, *args, **kwargs):
-		if not 'priority' in kwargs.keys():
-			kwargs['priority'] = 0
-		Job.__init__(self, *args, **kwargs)
-	def __lt__(self, other):
-		return self.dict['priority'] < other.dict['priority']
-	def __gt__(self, other):
-		return self.dict['priority'] > other.dict['priority']
-		
-class TermJob(PriorityJob):
-	def __init__(self, *args, **kwargs):
-		kwargs['action'] = 'term'
-		Job.__init__(self, *args, **kwargs)
-
-
-class Jobster(multiprocessing.Process):
-	"""Job handling class with event loop. It needs pygame to be initialised and currently has no way to check it."""
-	def __init__(self, time_per_loop=100, *args, **kwargs):
-		self.extern, self.intern = multiprocessing.Pipe()
-		self.pipe_lock = multiprocessing.Lock()
-		self.jobs_lock = multiprocessing.Lock()
-		self.time_per_loop = time_per_loop
-		self.jobs = []
-		self.last_time = pygame.time.get_ticks()
-		self.usage = 1
-		multiprocessing.Process.__init__(self, *args, **kwargs)
-	def pickup_job(self, job):
-		with self.pipe_lock:
-			self.extern.send(job)
-	def run(self):
-		self.stop = False
-		while not self.stop:
-			while self.intern.poll():
-				self.sort_into_jobs(self.intern.recv())
-			self.handle_jobs()
-			loop_time_left = self.time_per_loop - self.time_since_last_tick # It's more efficient to calculate self.time_since_last_tick only once
-			if loop_time_left >= 0:
-				pygame.time.wait(loop_time_left)
-			self.usage = float(1 - loop_time_left/self.time_per_loop)
-			#~ print "Usage:", self.usage
-			self.last_time = pygame.time.get_ticks()
-	def sort_into_jobs(self, job):
-		with self.jobs_lock:
-			self.jobs.append(job)
-	def handle_jobs(self):
-		with self.jobs_lock:
-			while self.jobs and pygame.time.get_ticks() - self.last_time < self.time_per_loop:
-				self.handle_job(self.jobs.pop(0))
-	def handle_job(self, job):
-		if isinstance(job, TermJob):
-			print 'Received job with action', job.dict['action'], ', terminating.'
-			self.stop = True
-	@property
-	def time_since_last_tick(self):
-		return pygame.time.get_ticks() - self.last_time
-
-def not_greater_index(ordered_list, value, key = lambda x:x):
-	"""Compares key(item) for all items in the *ordered* list to value and returns the highest index where kex(item) is still not greater. It uses the > comparing operator and no others. FAILS on non-ordered lists without producing an error. Recursive! In principle, the runtime is log(n)."""
-	length = len(ordered_list)
-	if length == 0: return 0
-	#~ elif length == 1:
-		#~ if value > key(ordered_list[0]): return 1
-		#~ else: return 0
-	else:
-		if value > key(ordered_list[length/2]):
-			return lower_or_equal_index(ordered_list[1+length/2:], value, key=key) + 1 + length/2
-		else:
-			return lower_or_equal_index(ordered_list[:length/2], value, key=key)
-
-
-class PriorityJobster(Jobster):
-	def sort_into_jobs(self, job):
-		"""Works by InsertionSort."""
-		with self.jobs_lock:
-			index = lower_or_equal_index(self.jobs, job)
-			jobs.insert(index, job)
-
-class MageLoadJob(PriorityJob):
-	def __init__(self, mage, path, thumb_path=None, *args, **kwargs):
+class MageLoadJob(enigmage.job.PriorityJob):
+	def __init__(self, mage, fullscreen_path=None, thumb_path=None, *args, **kwargs):
+		kwargs['action'] = 'MageLoad'
 		Job.__init__(self, *args, **kwargs)
 		self.mage = mage
-		self.path = path
-		if thumb_path == None: thumb_path = path
+		self.fullscreen_path = fullscreen_path
+		#~ if thumb_path == None: thumb_path = fullscreen_path
 		self.thumb_path = thumb_path
 
-class MageLoader(Jobster):
-	pass
+def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path):
+	"""Technical. Maybe this should load something for raw_image too?"""
+	PIL_thumb = None
+	pygame_fullscreen = None
+	pygame_thumb = None
+
+	if fullscreen_path:
+		fullscreen = Image.open(job.fullscreen_path)
+		if not thumb_path:
+			thumb = fullscreen.copy()
+		fullscreen.resize((job.mage.drawrect.width, job.mage.drawrect.height))
+		pygame_fullscreen = pygame.image.fromstring(fullscreen.tostring(), image.size).convert()
+
+	if thumb_path:
+		thumb = Image.open(job.thumb_path)
+	if thumb:
+		thumb.thumbnail((enigmage.THUMB_HEIGHT, enigmage.THUMB_WIDTH))
+		pygame_thumb = pygame.image.fromstring(thumb.tostring(), thumb.size)
+	return pygame_fullscreen, pygame_thumb
+
+class MageLoader(enigmage.job.PriorityJobster):
+	def handle_job(self, job):
+		enigmage.job.PriorityJobster.handle_job(self, job)
+		if isinstance(job, MageLoadJob):
+			fullscreen, thumb = PIL_to_pygame_fullscreen_and_or_thumb_image(job.fullscreen_path, job.thumb_path)
+			if fullscreen:
+				job.mage.fullscreen = fullscreen
+			if thumb:
+				job.mage.thumb = thumb
+				
+
+sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
+	
+class LazyMageDirNode(enigmage.directory.MageDirNode)
+	"""So far without thumbs on their own."""
+	def init_data(self, *args, **kwargs):
+		global sandglass_fullscreen, sandglass_thumb
+		mage = enigmage.Mage(sandglass_fullscreen, raw_fullscreen=sandglass_fullscreen, raw_thumb=sandglass_thumb) # Ugly: raw_image should be something else
+		job = MageLoadJob(mage, self.path)
+
+# TODO: Who starts the MageLoader? Avoid circular dependencies
