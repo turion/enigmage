@@ -111,7 +111,10 @@ else:
 enigmage.init(screen)
 
 	
-scrambled_eggs = enigmage.directory.MageDirNode(dir)
+#~ scrambled_eggs = enigmage.directory.MageDirNode(dir)
+
+import enigmage.loader
+scrambled_eggs = enigmage.loader.LazyMageDirNode(dir)
 
 
 meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)

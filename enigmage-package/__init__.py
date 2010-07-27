@@ -98,7 +98,6 @@ class Mage(pygame.sprite.Sprite):
 	_velocity = 0.0+0.0j
 	_goingto = False
 	_target = 0.0+0.0j
-	_drawrect = None
 	#_blowing = 0.0
 	#_blowheight = 0
 	_show_as_fullscreen = False
@@ -121,14 +120,14 @@ class Mage(pygame.sprite.Sprite):
 			raw_thumb = raw_image
 		self.thumb = fit_surface_to_thumb(raw_thumb)
 		
-		if raw_fullscreen == None:
-			raw_fullscreen = raw_image
-		self.fullscreen = raw_fullscreen
-				
 		if drawrect == None:
 			drawrect = var.screen_rect
 		self.drawrect = drawrect # Resizes self.fullscreen
 
+		if raw_fullscreen == None:
+			raw_fullscreen = raw_image
+		self.fullscreen = raw_fullscreen
+				
 		if target_x == None or target_y == None: 
 			self._movetarget((self._drawrect.centerx,self._drawrect.centery))
 		else:
@@ -153,7 +152,7 @@ class Mage(pygame.sprite.Sprite):
 	@drawrect.setter
 	def drawrect(self, drawrect):
 		self._drawrect = drawrect
-		self.fullscreen = self._raw_fullscreen # Resizing is done by the property
+		#~ self.fullscreen = self._raw_fullscreen # Resizing is done by the property
 	@property
 	def thumb(self):
 		return self._thumb
@@ -165,7 +164,7 @@ class Mage(pygame.sprite.Sprite):
 	def fullscreen(self):
 		return self._fullscreen
 	@fullscreen.setter
-	def fullscreen(self, fullscreen):
+	def fullscreen(self, fullscreen): # Needs drawrect to be set first
 		fullscreen = fit_surface_to_size(fullscreen, (self.drawrect.width, self.drawrect.height))  # Does not resize if the size is alread correct
 		self._fullscreen = fullscreen
 	def _movetarget(self, (target_x, target_y)):
