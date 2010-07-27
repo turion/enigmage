@@ -35,12 +35,17 @@ Aktuell:
 		Multithreading
 			Hintergrundprozess, der Thumbs erstellt und Bilder vorlädt usw.
 				Den braucht man jetzt schon, damit es benutzbar wird
-		Nur die Mages anzeigen, die im Bildbereich sind!
-			Am besten diese Funktion schon in Mages einbauen? Das wird kompliziert!
+				Den Prozess beim initialisieren in Var einbauen?
+				Zum Beschleunigen nicht alles laden
+					Spezielle Bibliothek verwenden
+		Nur die Mages anzeigen, die im Bildbereich sind! (Brauche ich das jetzt schon? Mal testen.)
+			Unbenutzte Mages aus dem Speicher löschen
+			Am besten diese Funktion schon in Mages einbauen? Das wird kompliziert! Wobei, eigentlich ist es einfach?
 
 
 Noch zu tun:
 4a. Dateiverwaltung
+	Schreibzugriff
 4b. SQL
 		Tags
 			Nicht nur Baumstruktur, sondern Mitgliedschaft in mehreren Gruppen via hierarchischer Tags
@@ -57,6 +62,8 @@ Noch zu tun:
 		LayeredUpdates anstatt Group verwenden um Überlappungen in den Griff zu bekommen
 		Baumartige Gruppen
 		Dateien nicht nur lesen, sondern auch schreiben
+			DirNode so bauen, dass er schreibbare Eigenschaften hat
+				Vielleicht auch dafür einen Hintergrundprozess starten
 7. Performance verbessern
 		Mages nur einmal laden, Überprüfung durch Gruppenzugehörigkeit
 		Bilder außerhalb der Sichtbereiches nicht zeichnen
@@ -64,7 +71,12 @@ Noch zu tun:
 		done
 		Multithreading
 			Hintergrundprozess, der Thumbs erstellt und Bilder vorlädt usw.
-8. OpenGL-Backend
+8. Weitere Funktionen
+		OpenGL-Backend
+		Ideen in Wikistruktur
+		TeX-Snippets in der Datenbank, per dvipng ausgeben
+			Bibliothekabhängigkeiten in der Datenbank verzeichnen
+		Backups der Datenbank in lesbaren Formaten (SQL? HTML??)
 """
 
 import enigmage, enigtree, enigmage.directory
