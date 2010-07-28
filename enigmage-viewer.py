@@ -127,7 +127,9 @@ while True:
 	loopcount += 1
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_ESCAPE: sys.exit()
+			if event.key == pygame.K_ESCAPE:
+				enigmage.loader.mage_loader.pickup_job(enigmage.job.TermJob())
+				sys.exit()
 			if event.key == pygame.K_RIGHT: meinesprites.focus_successor()
 			if event.key == pygame.K_LEFT: meinesprites.focus_predecessor()
 			if event.key == pygame.K_DOWN: meinesprites.zoom_in()

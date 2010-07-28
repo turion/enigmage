@@ -46,11 +46,13 @@ class MageLoader(enigmage.job.PriorityJobster):
 	def handle_job(self, job):
 		enigmage.job.PriorityJobster.handle_job(self, job)
 		if isinstance(job, MageLoadJob):
+			print "I will load a mage now"
 			fullscreen, thumb = PIL_to_pygame_fullscreen_and_or_thumb_image(job.fullscreen_path, job.thumb_path)
 			if fullscreen:
 				job.mage.fullscreen = fullscreen
 			if thumb:
 				job.mage.thumb = thumb
+			# Find a way to refresh .image
 				
 
 sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
