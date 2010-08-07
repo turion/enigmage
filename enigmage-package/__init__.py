@@ -47,8 +47,17 @@ class Var():
 def init(screen):
 	global var
 	var = Var(screen)
+		
+	import multiprocessing
+	global stop_services_lock, stop_services
+	stop_services_lock = multiprocessing.Lock()
+	stop_services = []
+
 	return True
 
+def quit():
+	for service_stopper in stop_services: service_stopper
+	return True
 
 #def image with thumb
 # return image, thumb

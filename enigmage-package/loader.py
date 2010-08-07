@@ -19,6 +19,15 @@ class MageLoadJob(enigmage.job.PriorityJob):
 		self.fullscreen_path = fullscreen_path
 		#~ if thumb_path == None: thumb_path = fullscreen_path
 		self.thumb_path = thumb_path
+	def do(self):
+			print "I will load a mage now"
+			fullscreen, thumb = PIL_to_pygame_fullscreen_and_or_thumb_image(self.fullscreen_path, self.thumb_path)
+			if fullscreen:
+				self.mage.fullscreen = fullscreen
+			if thumb:
+				self.mage.thumb = thumb
+			# Find a way to refresh .image
+
 
 def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, drawrect=None):
 	"""Technical. Maybe this should load something for raw_image too?"""
@@ -42,24 +51,16 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 		pygame_thumb = pygame.image.fromstring(thumb.tostring(), thumb.size, thumb.mode)
 	return pygame_fullscreen, pygame_thumb
 
-class MageLoader(enigmage.job.PriorityJobster):
-	def handle_job(self, job):
-		enigmage.job.PriorityJobster.handle_job(self, job)
-		if isinstance(job, MageLoadJob):
-			print "I will load a mage now"
-			fullscreen, thumb = PIL_to_pygame_fullscreen_and_or_thumb_image(job.fullscreen_path, job.thumb_path)
-			if fullscreen:
-				job.mage.fullscreen = fullscreen
-			if thumb:
-				job.mage.thumb = thumb
-			# Find a way to refresh .image
-				
+
 
 sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
 
-mage_loader = MageLoader()
+mage_loader = PriorityJobster()
 mage_loader.start()
-	
+
+with enigmage.stop_services_lock:
+	enigmage.stop_services.append(mage_loader.join)
+
 class LazyMageDirNode(enigmage.directory.MageDirNode):
 	"""So far without thumbs on their own."""
 	def init_data(self, *args, **kwargs):

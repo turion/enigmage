@@ -9,6 +9,9 @@ class Job(object):
 	def __init__(self, *args, **kwargs):
 		self.dict = {}
 		self.dict.update(kwargs)
+	def do():
+		"""Override this with what the job actually does."""
+		pass
 	
 class PriorityJob(Job):
 	"""A priority of 0 is the standard, default value. Higher priorities correspond to higher numbers. The comparisons < and > are implemented to directly compare the priorities. The operator == does *not* compare priorities but still checks, if the jobs are the same instance."""
@@ -61,6 +64,7 @@ class Jobster(multiprocessing.Process):
 			while self.jobs and pygame.time.get_ticks() - self.last_time < self.time_per_loop:
 				self.handle_job(self.jobs.pop(0))
 	def handle_job(self, job):
+		job.do()
 		if isinstance(job, TermJob):
 			print 'Received job with action', job.dict['action'], ', terminating.'
 			self.stop = True
