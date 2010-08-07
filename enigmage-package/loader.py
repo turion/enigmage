@@ -55,7 +55,7 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 
 sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
 
-mage_loader = PriorityJobster()
+mage_loader = enigmage.job.PriorityJobster()
 mage_loader.start()
 
 with enigmage.stop_services_lock:
