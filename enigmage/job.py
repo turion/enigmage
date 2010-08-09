@@ -32,8 +32,6 @@ class TermJob(PriorityJob):
 class Jobster(multiprocessing.Process):
 	"""Job handling class with event loop. It needs pygame to be initialised and currently has no way to check it."""
 	def __init__(self, time_per_loop=100, *args, **kwargs):
-		self.extern, self.intern = multiprocessing.Pipe()
-		self.pipe_lock = multiprocessing.Lock()
 		self.jobs_lock = multiprocessing.Lock()
 		self.time_per_loop = time_per_loop
 		self.jobs = []
@@ -41,14 +39,11 @@ class Jobster(multiprocessing.Process):
 		self.usage = 1
 		multiprocessing.Process.__init__(self, *args, **kwargs)
 	def pickup_job(self, job):
-		with self.pipe_lock:
-			self.extern.send(job)
+		with self.jobs_lock:
+			self.sort_into_jobs(job)
 	def run(self):
 		self.stop = False
 		while not self.stop:
-			while self.intern.poll():
-				job = self.intern.recv()
-				self.sort_into_jobs(job)
 			self.handle_jobs()
 			loop_time_left = self.time_per_loop - self.time_since_last_tick # It's more efficient to calculate self.time_since_last_tick only once
 			if loop_time_left >= 0:
@@ -56,8 +51,7 @@ class Jobster(multiprocessing.Process):
 			self.usage = float(1 - loop_time_left/self.time_per_loop)
 			self.last_time = pygame.time.get_ticks()
 	def sort_into_jobs(self, job):
-		with self.jobs_lock:
-			self.jobs.append(job)
+		self.jobs.append(job)
 	def handle_jobs(self):
 		with self.jobs_lock:
 			while self.jobs and pygame.time.get_ticks() - self.last_time < self.time_per_loop:
@@ -88,5 +82,4 @@ def not_greater_index(ordered_list, value, key = lambda x:x):
 class PriorityJobster(Jobster):
 	def sort_into_jobs(self, job):
 		"""Works by InsertionSort."""
-		with self.jobs_lock:
-			self.jobs.insert(not_greater_index(self.jobs, job), job)
+		self.jobs.insert(not_greater_index(self.jobs, job), job)
