@@ -129,6 +129,7 @@ while True:
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
 				enigmage.loader.mage_loader.pickup_job(enigmage.job.TermJob())
+				#~ enigmage.loader.mage_loader.sort_into_jobs(enigmage.job.TermJob())
 				enigmage.quit()
 				sys.exit()
 			if event.key == pygame.K_RIGHT: meinesprites.focus_successor()

@@ -31,7 +31,7 @@ class TermJob(PriorityJob):
 
 class Jobster(multiprocessing.Process):
 	"""Job handling class with event loop. It needs pygame to be initialised and currently has no way to check it."""
-	def __init__(self, time_per_loop=100, *args, **kwargs):
+	def __init__(self, time_per_loop=1000, *args, **kwargs):
 		self.extern, self.intern = multiprocessing.Pipe()
 		self.pipe_lock = multiprocessing.Lock()
 		self.jobs_lock = multiprocessing.Lock()
@@ -58,14 +58,17 @@ class Jobster(multiprocessing.Process):
 	def sort_into_jobs(self, job):
 		with self.jobs_lock:
 			self.jobs.append(job)
+			print self, 'sorted into, has', self.jobs
 	def handle_jobs(self):
 		with self.jobs_lock:
+			print self, 'handles jobs', self.jobs
 			while self.jobs and pygame.time.get_ticks() - self.last_time < self.time_per_loop:
 				self.handle_job(self.jobs.pop(0))
 	def handle_job(self, job):
+		print self, ':', job
 		job.do()
 		if isinstance(job, TermJob):
-			print 'Received job with action', job.dict['action'], ', terminating.'
+			print self, 'received job with action', job.dict['action'], ', terminating.'
 			self.stop = True
 	@property
 	def time_since_last_tick(self):
@@ -90,3 +93,4 @@ class PriorityJobster(Jobster):
 		"""Works by InsertionSort."""
 		with self.jobs_lock:
 			self.jobs.insert(not_greater_index(self.jobs, job), job)
+			print self, 'psorted into, has', self.jobs

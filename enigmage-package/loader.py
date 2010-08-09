@@ -73,11 +73,11 @@ class LazyMageDirNode(enigmage.directory.MageDirNode):
 			global sandglass_fullscreen, sandglass_thumb
 			mage = enigmage.Mage(sandglass_fullscreen, raw_fullscreen=sandglass_fullscreen, raw_thumb=sandglass_thumb) # Ugly: raw_image should be something else
 			
-			job = MageLoadJob(self, fullscreen_path=self.path, thumb_path=self.path)
+			job = enigmage.job.PriorityJob(fullscreen_path=self.path, thumb_path=self.path)
 			
 			global mage_loader
 			mage_loader.pickup_job(job)
-			print "pick"
+			#~ mage_loader.sort_into_jobs(job)
 		else:
 			image = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
 			mage = enigmage.Mage(image, title=self.path) # This is ugly!!
