@@ -1,16 +1,10 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-import enigmage.job, enigmage.directory
+import enigmage.job, enigmage.jobster, enigmage.directory
 import enigmage
 import Image, pygame, pygame.image
 
-import pygame.time # Can be removed soon
-
-try:
-	enigmage.var
-except AttributeError:
-	raise ImportError("enigmage has to be initialised before this module can be imported!")
 	
 
 class MageLoadJob(enigmage.job.PriorityJob):
@@ -24,7 +18,6 @@ class MageLoadJob(enigmage.job.PriorityJob):
 	def do(self):
 		#~ print "I will load a mage now"
 		fullscreen, thumb = PIL_to_pygame_fullscreen_and_or_thumb_image(self.fullscreen_path, self.thumb_path)
-		pygame.time.wait(500)
 		if fullscreen:
 			self.node.data.fullscreen = fullscreen
 		if thumb:
@@ -57,7 +50,7 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 
 sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
 
-mage_loader = enigmage.job.PriorityJobster()
+mage_loader = enigmage.jobster.PriorityJobster()
 mage_loader.start()
 
 with enigmage.stop_services_lock:
@@ -73,7 +66,7 @@ class LazyMageDirNode(enigmage.directory.MageDirNode):
 			global sandglass_fullscreen, sandglass_thumb
 			mage = enigmage.Mage(sandglass_fullscreen, raw_fullscreen=sandglass_fullscreen, raw_thumb=sandglass_thumb) # Ugly: raw_image should be something else
 			
-			job = enigmage.job.PriorityJob(fullscreen_path=self.path, thumb_path=self.path)
+			job = MageLoadJob(self, fullscreen_path=self.path, thumb_path=self.path)
 			
 			global mage_loader
 			mage_loader.pickup_job(job)
