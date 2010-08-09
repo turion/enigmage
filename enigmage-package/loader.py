@@ -57,7 +57,7 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 
 sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
 
-mage_loader = enigmage.job.PriorityJobster()
+mage_loader = enigmage.job.Jobster(name='Lieblings')
 mage_loader.start()
 
 with enigmage.stop_services_lock:
@@ -77,7 +77,6 @@ class LazyMageDirNode(enigmage.directory.MageDirNode):
 			
 			global mage_loader
 			mage_loader.pickup_job(job)
-			print "pick"
 		else:
 			image = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
 			mage = enigmage.Mage(image, title=self.path) # This is ugly!!
