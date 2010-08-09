@@ -34,7 +34,7 @@ class Jobster(multiprocessing.Process):
 	def __init__(self, time_per_loop=1000, *args, **kwargs):
 		self.jobs_lock = multiprocessing.Lock()
 		self.time_per_loop = time_per_loop
-		self.jobs = [Job()]
+		self.jobs = [PriorityJob()]
 		self.last_time = pygame.time.get_ticks()
 		self.usage = 1
 		multiprocessing.Process.__init__(self, *args, **kwargs)
@@ -91,4 +91,4 @@ class PriorityJobster(Jobster):
 		"""Works by InsertionSort."""
 		with self.jobs_lock:
 			self.jobs.insert(not_greater_index(self.jobs, job), job)
-			print 'Picked up Job', job
+			print self, 'picked up Job', job
