@@ -4,7 +4,7 @@
 """enigmage"""
 
 
-__ALL__ = [ 'directory' ]
+__ALL__ = [ 'directory', 'job', 'loader' ]
 
 import pygame, math
 import enigtree
@@ -59,8 +59,6 @@ def quit():
 	for service_stopper in stop_services: service_stopper
 	return True
 
-#def image with thumb
-# return image, thumb
 
 def perfect_fit(width1, height1, width2, height2):
 	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
@@ -109,7 +107,6 @@ class Mage(pygame.sprite.Sprite):
 	_target = 0.0+0.0j
 	#_blowing = 0.0
 	#_blowheight = 0
-	_show_as_fullscreen = False
 	_raw_image = None
 	_title = ''
 	def __str__(self):
@@ -124,6 +121,8 @@ class Mage(pygame.sprite.Sprite):
 		if title: self._title = title
 		
 		self._raw_image = raw_image
+
+		self._show_as_fullscreen = show_as_fullscreen
 
 		if raw_thumb == None:
 			raw_thumb = raw_image
@@ -169,6 +168,8 @@ class Mage(pygame.sprite.Sprite):
 	def thumb(self, thumb):
 		thumb = fit_surface_to_thumb(thumb) # Does not resize if the size is alread correct
 		self._thumb = thumb
+		if not self._show_as_fullscreen:
+			self.image = self.thumb # UGLY
 	@property
 	def fullscreen(self):
 		return self._fullscreen
@@ -176,6 +177,8 @@ class Mage(pygame.sprite.Sprite):
 	def fullscreen(self, fullscreen): # Needs drawrect to be set first
 		fullscreen = fit_surface_to_size(fullscreen, (self.drawrect.width, self.drawrect.height))  # Does not resize if the size is alread correct
 		self._fullscreen = fullscreen
+		if self._show_as_fullscreen:
+			self.image = self.fullscreen # UGLY
 	def _movetarget(self, (target_x, target_y)):
 		self._target = target_x + target_y * 1.0j
 	def _update_rect_to_target(self):
@@ -243,16 +246,19 @@ class Mage(pygame.sprite.Sprite):
 		
 		#if not self._drawrect.colliderect(self.rect): print '"MAMA! Bin weg!" - Dieser Hilferuf kam von ', self, '. Er befindet sich gerade bei ', self.rect.center, '.'
 	def become_thumb(self):
-		self._show_as_fullscreen = False
-		self._goingto = True
-		self.image = self.thumb
-		self._update_rect_to_target()
+		#~ if self._show_as_fullscreen:
+			self._show_as_fullscreen = False
+			self._goingto = True
+			self.image = self.thumb
+			self._update_rect_to_target()
+			print "Thumb"
 	def become_fullscreen(self):
-		if not self._show_as_fullscreen:
+		#~ if not self._show_as_fullscreen:
 			self._show_as_fullscreen = True
 			self.image = self.fullscreen
 			self._goingto = False
 			self.rect.center = self._drawrect.center
+			print "Full"
 		# Der Gruppe bescheid sagen!
 	def toggle_fullscreen(self):
 		if self._show_as_fullscreen:
@@ -261,6 +267,11 @@ class Mage(pygame.sprite.Sprite):
 		else:
 			#print "Becoming fullscreen"
 			self.become_fullscreen()
+	def dance(self):
+		"""Debug, for identifying"""
+		self.rect.center = (self.rect.centerx, self.rect.centery - 30)
+		self._goingto = True
+		
 	
 
 

@@ -135,6 +135,7 @@ while True:
 			if event.key == pygame.K_LEFT: meinesprites.focus_predecessor()
 			if event.key == pygame.K_DOWN: meinesprites.zoom_in()
 			if event.key == pygame.K_UP: meinesprites.zoom_out()
+			if event.key == pygame.K_d: scrambled_eggs.childs[0].data.dance()
 	# events.pump oder so?
 	keys = pygame.key.get_pressed()
 	meinesprites.clear(enigmage.var.screen,enigmage.var.background)

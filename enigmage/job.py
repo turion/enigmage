@@ -4,12 +4,11 @@
 import multiprocessing
 import pygame.time
 
-
 class Job(object):
 	def __init__(self, *args, **kwargs):
 		self.dict = {}
 		self.dict.update(kwargs)
-	def do():
+	def do(self):
 		"""Override this with what the job actually does."""
 		pass
 	
@@ -48,13 +47,13 @@ class Jobster(multiprocessing.Process):
 		self.stop = False
 		while not self.stop:
 			while self.intern.poll():
-				self.sort_into_jobs(self.intern.recv())
+				job = self.intern.recv()
+				self.sort_into_jobs(job)
 			self.handle_jobs()
 			loop_time_left = self.time_per_loop - self.time_since_last_tick # It's more efficient to calculate self.time_since_last_tick only once
 			if loop_time_left >= 0:
 				pygame.time.wait(loop_time_left)
 			self.usage = float(1 - loop_time_left/self.time_per_loop)
-			#~ print "Usage:", self.usage
 			self.last_time = pygame.time.get_ticks()
 	def sort_into_jobs(self, job):
 		with self.jobs_lock:
