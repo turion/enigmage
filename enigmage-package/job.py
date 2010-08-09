@@ -26,7 +26,7 @@ class PriorityJob(Job):
 class TermJob(PriorityJob):
 	def __init__(self, *args, **kwargs):
 		kwargs['action'] = 'term'
-		Job.__init__(self, *args, **kwargs)
+		PriorityJob.__init__(self, *args, **kwargs)
 
 
 class Jobster(multiprocessing.Process):
