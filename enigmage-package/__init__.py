@@ -22,7 +22,7 @@ def halleluja():
 
 class Var():
 	"""Holds various important global variables for the whole enigmage"""
-	def __init__(self, screen = None):
+	def __init__(self, screen = None, max_fps=40):
 		if screen == None:
 			size = 800, 600
 			self.screen = pygame.display.set_mode(size)
@@ -30,12 +30,13 @@ class Var():
 		self.background = pygame.Surface(self.screen.get_size()).convert()
 		self.background.fill((0,0,0))
 		self._ticking = 0
+		self.max_fps = max_fps
 		self.background = pygame.Surface(self.screen.get_size()).convert()
 		self.background.fill((0,0,0))
 		self.screen_rect = self.screen.get_rect()
 	def tick(self): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
 		if self._ticking:
-			self.time = self.clock.tick(40)
+			self.time = self.clock.tick(self.max_fps)
 		else:
 			self._ticking = 1
 			self.clock = pygame.time.Clock()
@@ -48,15 +49,18 @@ def init(screen):
 	var = Var(screen)
 	return True
 
-
-#def image with thumb
-# return image, thumb
-
+def perfect_fit(width1, height1, width2, height2):
+	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
 
 def scale_surface_to_size(image, (width, height)):
 	"""Creates a new surface scaled to width x height. Currently only a wrapper for pygame.transform.scale, but could be replaced for something faster in the future"""
-	scaled_image = pygame.transform.scale(image, (width, height))
-	return scaled_image
+	if (image.get_width(), image.get_height()) == (width, height): # Do not resize if the size is alread correct
+		return image
+	else:
+		#~ print "I have to resize something to", width, height
+		scaled_image = pygame.transform.scale(image, (width, height))
+		return scaled_image
+
 
 def scale_surface_to_height(image, height):
 	"""Creates a new surface with the given height. Height and width are both rounded to an integer value, so float arguments are allowed."""
@@ -91,10 +95,8 @@ class Mage(pygame.sprite.Sprite):
 	_velocity = 0.0+0.0j
 	_goingto = False
 	_target = 0.0+0.0j
-	_drawrect = None
 	#_blowing = 0.0
 	#_blowheight = 0
-	_show_as_fullscreen = False
 	_raw_image = None
 	_title = ''
 	def __str__(self):
@@ -102,63 +104,78 @@ class Mage(pygame.sprite.Sprite):
 		#if self._title: str += ' "' + self._title + '"'
 		#return str
 		return self._title
-	def __init__(self, raw_image, raw_thumb=None, drawrect=None, show_as_fullscreen=False, target_x = None, target_y = None, title=None):
+	def __init__(self, raw_image, raw_thumb=None, raw_fullscreen=None, drawrect=None, show_as_fullscreen=False, target_x = None, target_y = None, title=None):
 		"""raw_image contains all image information. For future performance enhancement it is possible to give thumb and fullscreen images as arguments."""
 		pygame.sprite.Sprite.__init__(self)
 		
 		if title: self._title = title
 		
+		self._raw_image = raw_image
+
+		self._show_as_fullscreen = show_as_fullscreen
+
 		if raw_thumb == None:
 			raw_thumb = raw_image
 		self.thumb = fit_surface_to_thumb(raw_thumb)
 		
-		self._raw_image = raw_image
 		if drawrect == None:
 			drawrect = var.screen_rect
-		self.assign_drawrect(drawrect)
+		self.drawrect = drawrect # Resizes self.fullscreen
 
-		try:
-			self._movetarget((target_x, target_y))
-		except TypeError: 
-			#print "Bad or no parameters target_x, target_y to Mage.__init__(...). Defaulting to the middle of the drawrect (could be the screen)."
+		if raw_fullscreen == None:
+			raw_fullscreen = raw_image
+		self.fullscreen = raw_fullscreen
+				
+		if target_x == None or target_y == None: 
 			self._movetarget((self._drawrect.centerx,self._drawrect.centery))
+		else:
+			self._movetarget((target_x, target_y))
 		
-		self._show_as_fullscreen = show_as_fullscreen
-		if self._show_as_fullscreen:
+		if show_as_fullscreen:
 			self.become_fullscreen()
 		else: # Supposed to be shown as a thumb
 			self.become_thumb()
-	def assign_image(self, image, rect=None):
-		"""Has to be called before the mage can be shown or the rect of it accessed. Might include a clipping rect in the future."""
-		if rect == None: rect = image.get_rect()
-		self.image, self.rect = image, rect
+	@property
+	def image(self):
+		return self._image
+	@image.setter
+	def image(self, image):
+		"""Has to be set before the mage can be shown or the rect of it accessed. Might somehow include a clipping rect in the future."""
+		rect = image.get_rect()
+		self._image, self.rect = image, rect
 		self._update_rect_to_target()
-	def assign_drawrect(self, drawrect):
+	@property
+	def drawrect(self):
+		return self._drawrect
+	@drawrect.setter
+	def drawrect(self, drawrect):
 		self._drawrect = drawrect
-		self.fullscreen = fit_surface_to_size(self._raw_image, (self._drawrect.width, self._drawrect.height))
-	def right(self):
-		self._velocity += self._velstep
-	def left(self):
-		self._velocity -= self._velstep
-	def up(self):
-		self._velocity -= self._velstep * 1.0j
-	def down(self):
-		self._velocity += self._velstep * 1.0j
-	#def right(self): # 10 Pixel pro Tastendruck
-		#self._move += self._movestep
-	#def left(self):
-		#self._move -= self._movestep
-	#def up(self):
-		#self._move -= self._movestep * 1.0j
-	#def down(self):
-		#self._move += self._movestep * 1.0j
+		#~ self.fullscreen = self._raw_fullscreen # Resizing is done by the property
+	@property
+	def thumb(self):
+		return self._thumb
+	@thumb.setter
+	def thumb(self, thumb):
+		thumb = fit_surface_to_thumb(thumb) # Does not resize if the size is alread correct
+		self._thumb = thumb
+		if not self._show_as_fullscreen:
+			self.image = self.thumb # UGLY
+	@property
+	def fullscreen(self):
+		return self._fullscreen
+	@fullscreen.setter
+	def fullscreen(self, fullscreen): # Needs drawrect to be set first
+		fullscreen = fit_surface_to_size(fullscreen, (self.drawrect.width, self.drawrect.height))  # Does not resize if the size is alread correct
+		self._fullscreen = fullscreen
+		if self._show_as_fullscreen:
+			self.image = self.fullscreen # UGLY
 	def _movetarget(self, (target_x, target_y)):
 		self._target = target_x + target_y * 1.0j
 	def _update_rect_to_target(self):
 		if not self._show_as_fullscreen:
 			self.rect.centerx, self.rect.centery = int(round(self._target.real)), int(round(self._target.imag))
 	def beamto(self, (target_x, target_y)):
-		#print self, " is beaming to (", target_x, ", ", target_y, ")"
+		#print self, " is beaming to (", target_x, ",", target_y, ")"
 		"""Moves _target and subsequently the rect. Accepts float arguments"""
 		try:
 			self._movetarget((target_x, target_y))
@@ -218,31 +235,30 @@ class Mage(pygame.sprite.Sprite):
 		#if self._blowing > 1: self._blowing = 0
 		
 		#if not self._drawrect.colliderect(self.rect): print '"MAMA! Bin weg!" - Dieser Hilferuf kam von ', self, '. Er befindet sich gerade bei ', self.rect.center, '.'
-	def _setsize(self, (width, height)):
-		"""Manually set the shown image to a resized thumb or fullscreen"""
-		if self._thumb: show_image = self.thumb
-		else: show_image = self.fullscreen
-		self.assign_image(fit_surface_to_size(show_image, (width, height)))
 	def become_thumb(self):
-		self._show_as_fullscreen = False
-		self._goingto = True
-		self.assign_image(self.thumb)
-		self._update_rect_to_target()
+		#~ if self._show_as_fullscreen:
+			self._show_as_fullscreen = False
+			self._goingto = True
+			self.image = self.thumb
+			self._update_rect_to_target()
+			#~ print "Thumb"
 	def become_fullscreen(self):
-		if not self._show_as_fullscreen:
+		#~ if not self._show_as_fullscreen:
 			self._show_as_fullscreen = True
-			self.assign_image(self.fullscreen)
+			self.image = self.fullscreen
 			self._goingto = False
 			self.rect.center = self._drawrect.center
+			#~ print "Full"
 		# Der Gruppe bescheid sagen!
 	def toggle_fullscreen(self):
 		if self._show_as_fullscreen:
-			#print "Becoming thumb"
 			self.become_thumb()
 		else:
-			#print "Becoming fullscreen"
 			self.become_fullscreen()
-	
+	def dance(self):
+		"""Debug, for identifying"""
+		self.rect.center = (self.rect.centerx, self.rect.centery - 30)
+		self._goingto = True
 
 
 
