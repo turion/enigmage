@@ -48,15 +48,15 @@ def init(screen):
 	global var
 	var = Var(screen)
 		
-	import multiprocessing
+	import threading
 	global stop_services_lock, stop_services
-	stop_services_lock = multiprocessing.Lock()
+	stop_services_lock = threading.Lock()
 	stop_services = []
 
 	return True
 
 def quit():
-	for service_stopper in stop_services: service_stopper
+	for service_stopper in stop_services: service_stopper()
 	return True
 
 
