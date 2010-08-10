@@ -44,7 +44,7 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 		thumb = Image.open(thumb_path)
 	if thumb:
 		thumb.thumbnail((enigmage.THUMB_HEIGHT, enigmage.THUMB_WIDTH))
-		pygame_thumb = pygame.image.fromstring(thumb.tostring(), thumb.size, thumb.mode)
+		pygame_thumb = pygame.image.fromstring(thumb.tostring(), thumb.size, thumb.mode).convert()
 	return pygame_fullscreen, pygame_thumb
 
 
