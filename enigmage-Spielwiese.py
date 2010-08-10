@@ -2,18 +2,35 @@
 # -*- coding: utf-8 -*-
 
 """enigmage-Spielwiese
-Testing for new enigmage and enigtree components"""
+Testing for enigmage components"""
 
-import enigtree
+#Teste den PriorityJobster ausführlich!
 
-parent = enigtree.Node(data="Elternteil")
+import enigmage.job, time
 
-child1 = enigtree.Node(parent=parent, data="Großer Bruder")
-child2 = enigtree.Node(parent=parent, data="Kleine Schwester")
+print 'Jetzt lade ich den priorityjobster.'
 
-enkel = enigtree.Node(parent=child1, data="Kleener")
-enkel2 = enigtree.Node(parent=child2, data="Der andere Kleene")
-urenkel = enigtree.Node(parent=enkel, data="Der ganz Kleene")
+loader = enigmage.job.PriorityJobster(time_per_loop=1000)
 
-print child1, "sagt: Mein Nachfolger ist", child2
-print parent.elaborate_str()
+print 'Jetzt starte ich ihn.'
+
+loader.start()
+
+print 'Jetzt warte ich.'
+
+time.sleep(2.5)
+
+print 'Jetzt erzeuge ich den termjob.'
+
+termjob = enigmage.job.TermJob(hara="kiri")
+
+print 'Jetzt schieße ich den Vogel ab.'
+
+loader.pickup_job(termjob)
+
+print 'Jetzt warte ich auf ihn.'
+
+loader.join()
+
+print 'Das wars.'
+
