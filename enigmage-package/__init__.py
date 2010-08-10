@@ -251,14 +251,14 @@ class Mage(pygame.sprite.Sprite):
 			self._goingto = True
 			self.image = self.thumb
 			self._update_rect_to_target()
-			print "Thumb"
+			#~ print "Thumb"
 	def become_fullscreen(self):
 		#~ if not self._show_as_fullscreen:
 			self._show_as_fullscreen = True
 			self.image = self.fullscreen
 			self._goingto = False
 			self.rect.center = self._drawrect.center
-			print "Full"
+			#~ print "Full"
 		# Der Gruppe bescheid sagen!
 	def toggle_fullscreen(self):
 		if self._show_as_fullscreen:

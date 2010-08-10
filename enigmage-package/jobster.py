@@ -22,9 +22,9 @@ class Jobster(threading.Thread):
 		threading.Thread.__init__(self, *args, **kwargs)
 	def pickup_job(self, job):
 		with self.jobs_lock:
-			print self, 'has:', self.jobs
+			#~ print self, 'has:', self.jobs
 			self.jobs.append(job)
-		print 'Picked up Job', job, 'I have:', self.jobs
+		#~ print 'Picked up Job', job, 'I have:', self.jobs
 	def run(self):
 		self.stop = False
 		while not self.stop:
@@ -37,15 +37,10 @@ class Jobster(threading.Thread):
 	def handle_jobs(self):
 		with self.jobs_lock:
 			while self.jobs and pygame.time.get_ticks() - self.last_time < self.time_per_loop:
-				print self, 'starts to handle jobs:', self.jobs
-				job = self.jobs[0]
-				del self.jobs[0]
-				print 'Jobs:', self.jobs
-				self.handle_job(job)
-				#~ self.handle_job(self.jobs.pop(0))
+				self.handle_job(self.jobs.pop(0))
 				
 	def handle_job(self, job):
-		print self, 'handles job', job
+		#~ print self, 'handles job', job
 		job.do()
 		if isinstance(job, enigmage.job.TermJob):
 			print self, 'received job with action', job.dict['action'], ', terminating.'
