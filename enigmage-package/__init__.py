@@ -4,7 +4,7 @@
 """enigmage"""
 
 
-__ALL__ = [ 'directory', 'job', 'loader' ]
+__ALL__ = [ 'directory', 'job', 'loader', 'jobster' ]
 
 import pygame, math
 import enigtree
