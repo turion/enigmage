@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import enigmage.job
-import multiprocessing
+import threading
 import pygame.time
 
 try:
@@ -11,15 +11,15 @@ except AttributeError:
 	raise ImportError("enigmage has to be initialised before this module can be imported!")
 
 
-class Jobster(multiprocessing.Process):
+class Jobster(threading.Thread):
 	"""Job handling class with event loop. It needs pygame to be initialised and currently has no way to check it."""
 	def __init__(self, time_per_loop=1000, *args, **kwargs):
-		self.jobs_lock = multiprocessing.Lock()
+		self.jobs_lock = threading.Lock()
 		self.time_per_loop = time_per_loop
-		self.jobs = [PriorityJob()]
+		self.jobs = []
 		self.last_time = pygame.time.get_ticks()
 		self.usage = 1
-		multiprocessing.Process.__init__(self, *args, **kwargs)
+		threading.Thread.__init__(self, *args, **kwargs)
 	def pickup_job(self, job):
 		with self.jobs_lock:
 			print self, 'has:', self.jobs
@@ -47,7 +47,7 @@ class Jobster(multiprocessing.Process):
 	def handle_job(self, job):
 		print self, 'handles job', job
 		job.do()
-		if isinstance(job, TermJob):
+		if isinstance(job, enigmage.job.TermJob):
 			print self, 'received job with action', job.dict['action'], ', terminating.'
 			self.stop = True
 	@property
