@@ -49,10 +49,10 @@ def init(screen):
 	var = Var(screen)
 		
 	import threading
-	global stop_services_lock, stop_services
+	global stop_services_lock, stop_services, loop_lock
 	stop_services_lock = threading.Lock()
 	stop_services = []
-
+	loop_lock = threading.Lock()
 	return True
 
 def quit():

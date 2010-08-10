@@ -122,6 +122,7 @@ meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)
 enigmage.var.tick()
 loopcount = 0
 while True:
+	#~ with enigmage.loop_lock:
 	enigmage.var.tick()
 	if enigmage.var.time > 1000: print "Delay in loop ", loopcount, ":", enigmage.var.time
 	loopcount += 1

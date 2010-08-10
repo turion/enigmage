@@ -18,6 +18,7 @@ class MageLoadJob(enigmage.job.PriorityJob):
 	def do(self):
 		#~ print "I will load a mage now"
 		fullscreen, thumb = PIL_to_pygame_fullscreen_and_or_thumb_image(self.fullscreen_path, self.thumb_path)
+		#~ with enigmage.loop_lock:
 		if fullscreen:
 			self.node.data.fullscreen = fullscreen
 		if thumb:
