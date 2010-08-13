@@ -55,11 +55,14 @@ def init(screen):
 	loop_lock = threading.Lock()
 	return True
 
+<<<<<<< HEAD
 def quit():
 	for service_stopper in stop_services: service_stopper()
 	return True
 
 
+=======
+>>>>>>> stable
 def perfect_fit(width1, height1, width2, height2):
 	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
 
@@ -68,9 +71,16 @@ def scale_surface_to_size(image, (width, height)):
 	if (image.get_width(), image.get_height()) == (width, height): # Do not resize if the size is alread correct
 		return image
 	else:
+<<<<<<< HEAD
 		print "I have to resize something to", width, height
 		scaled_image = pygame.transform.scale(image, (width, height))
 		return scaled_image
+=======
+		#~ print "I have to resize something to", width, height
+		scaled_image = pygame.transform.scale(image, (width, height))
+		return scaled_image
+
+>>>>>>> stable
 
 def scale_surface_to_height(image, height):
 	"""Creates a new surface with the given height. Height and width are both rounded to an integer value, so float arguments are allowed."""
@@ -262,17 +272,18 @@ class Mage(pygame.sprite.Sprite):
 		# Der Gruppe bescheid sagen!
 	def toggle_fullscreen(self):
 		if self._show_as_fullscreen:
-			#print "Becoming thumb"
 			self.become_thumb()
 		else:
-			#print "Becoming fullscreen"
 			self.become_fullscreen()
 	def dance(self):
 		"""Debug, for identifying"""
 		self.rect.center = (self.rect.centerx, self.rect.centery - 30)
 		self._goingto = True
+<<<<<<< HEAD
 		
 	
+=======
+>>>>>>> stable
 
 
 
