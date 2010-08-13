@@ -11,9 +11,9 @@ except AttributeError:
 	raise ImportError("enigmage has to be initialised before this module can be imported!")
 
 
-class Jobster(threading.Thread):
+class Jobster(threading.Thread): # Kann man hier eine Priorität vergeben?
 	"""Job handling class with event loop. It needs pygame to be initialised and currently has no way to check it."""
-	def __init__(self, time_per_loop=1000, *args, **kwargs):
+	def __init__(self, time_per_loop=100, *args, **kwargs):
 		self.jobs_lock = threading.Lock()
 		self.time_per_loop = time_per_loop
 		self.jobs = []
@@ -23,7 +23,7 @@ class Jobster(threading.Thread):
 	def pickup_job(self, job):
 		with self.jobs_lock:
 			#~ print self, 'has:', self.jobs
-			self.jobs.append(job)
+			self.jobs.insert(0, job)
 		#~ print 'Picked up Job', job, 'I have:', self.jobs
 	def run(self):
 		self.stop = False
@@ -37,7 +37,7 @@ class Jobster(threading.Thread):
 	def handle_jobs(self):
 		with self.jobs_lock:
 			while self.jobs and pygame.time.get_ticks() - self.last_time < self.time_per_loop:
-				self.handle_job(self.jobs.pop(0))
+				self.handle_job(self.jobs.pop())
 				
 	def handle_job(self, job):
 		#~ print self, 'handles job', job
@@ -51,10 +51,10 @@ class Jobster(threading.Thread):
 
 
 class PriorityJobster(Jobster):
-	def sort_into_jobs(self, job):
+	def pickup_job(self, job):
 		"""Works by InsertionSort."""
 		with self.jobs_lock:
-			self.jobs.insert(not_greater_index(self.jobs, job), job)
-			print self, 'psorted into, has', self.jobs
+			self.jobs.insert(enigmage.job.not_greater_index(self.jobs, job), job)
+			#~ print self, 'psorted', job,  'into jobs, has', self.jobs
 
 

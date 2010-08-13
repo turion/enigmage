@@ -124,13 +124,12 @@ loopcount = 0
 while True:
 	#~ with enigmage.loop_lock:
 	enigmage.var.tick()
-	if enigmage.var.time > 1000: print "Delay in loop ", loopcount, ":", enigmage.var.time
+	if enigmage.var.time > 100: print "Delay in loop ", loopcount, ":", enigmage.var.time, "milliseconds"
 	loopcount += 1
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
-				enigmage.loader.mage_loader.pickup_job(enigmage.job.TermJob())
-				#~ enigmage.loader.mage_loader.sort_into_jobs(enigmage.job.TermJob())
+				enigmage.loader.mage_loader.pickup_job(enigmage.job.TermJob(priority=3)) # Wieso bringt das nix?
 				enigmage.quit()
 				sys.exit()
 			if event.key == pygame.K_RIGHT: meinesprites.focus_successor()
@@ -141,6 +140,6 @@ while True:
 	# events.pump oder so?
 	keys = pygame.key.get_pressed()
 	meinesprites.clear(enigmage.var.screen,enigmage.var.background)
-	meinesprites.update()
+	meinesprites.update() # Bastian: ja, nur dass man diese schritte nochmal für die Physik unterteilt
 	meinesprites.draw(enigmage.var.screen) # dirtyrects = meinesprites.draw(var.screen)
 	pygame.display.flip() # pygame.display.update(dirtyrects)

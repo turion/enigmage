@@ -26,7 +26,7 @@ class MageLoadJob(enigmage.job.PriorityJob):
 		# Find a way to refresh .image
 
 
-def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, drawrect=None):
+def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, drawrect=None): # Liefert die die richtigen Größen? Dauert das Resize zu lang?
 	"""Technical. Maybe this should load something for raw_image too?"""
 	PIL_thumb = None
 	pygame_fullscreen = None
