@@ -119,6 +119,8 @@ scrambled_eggs = enigmage.loader.LazyMageDirNode(dir)
 
 meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)
 
+import random, pygame.time
+
 enigmage.var.tick()
 loopcount = 0
 while True:
@@ -143,3 +145,4 @@ while True:
 	meinesprites.update() # Bastian: ja, nur dass man diese schritte nochmal für die Physik unterteilt
 	meinesprites.draw(enigmage.var.screen) # dirtyrects = meinesprites.draw(var.screen)
 	pygame.display.flip() # pygame.display.update(dirtyrects)
+
