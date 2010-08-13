@@ -205,7 +205,7 @@ class Mage(pygame.sprite.Sprite):
 		#self._velocity += var.time * strength * distance * (1 + anharmonicity * (abs(distance)**2))
 		#self._velocity += var.time * strength * distance * (1 + bumpheight / (1 + (abs(distance)/bumpsize)**2))
 		self._velocity += var.time * strength * distance
-		if abs(distance) < snap:
+		if abs(distance) < snap and abs(self._velocity) * var.time < snap:
 			self._goingto = False
 			#print "Went to"
 	def _friction(self):
