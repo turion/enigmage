@@ -189,7 +189,7 @@ class Mage(pygame.sprite.Sprite):
 			self._goingto = True
 		except TypeError:
 			print "Bad Parameters for Mage.goto((target_x,target_y))" # In this case, self._goingto is left untouched
-	def _attraction(self):
+	def _attraction(self, time):
 		strength = 0.00003
 
 		#weak_scale = 10 # Pixels
@@ -202,34 +202,44 @@ class Mage(pygame.sprite.Sprite):
 		self.rect.centery * 1.0j)
 		#self._velocity += strength * distance * math.atan(abs(distance)/weak_scale) / (0.0001 + abs(distance))
 		#print (1 + anharmonicity * (abs(distance)**2))
-		#self._velocity += var.time * strength * distance * (1 + anharmonicity * (abs(distance)**2))
-		#self._velocity += var.time * strength * distance * (1 + bumpheight / (1 + (abs(distance)/bumpsize)**2))
-		self._velocity += var.time * strength * distance
-		if abs(distance) < snap and abs(self._velocity) * var.time < snap:
+		#self._velocity += time * strength * distance * (1 + anharmonicity * (abs(distance)**2))
+		#self._velocity += time * strength * distance * (1 + bumpheight / (1 + (abs(distance)/bumpsize)**2))
+		self._velocity += time * strength * distance
+		if abs(distance) < snap and abs(self._velocity) * time < snap:
 			self._goingto = False
 			#print "Went to"
-	def _friction(self):
+	def _friction(self, time):
 		overall_friction = 0.003
-		ground_friction = 1
-		air_friction = 2
-		self._velocity -= var.time * overall_friction * self._velocity * (air_friction + ground_friction/(1+abs(self._velocity)))
+		air_friction = 4
+		quadratic_air_friction = 1
+		self._velocity -= time * overall_friction * self._velocity * (air_friction + quadratic_air_friction * abs(self._velocity)/time)
 	def update(self):
 		debugstring = str(self) + ' bei ' + str(self.rect.center) + ' v=' + str(self._velocity)
 		if not self._show_as_fullscreen: # Doing the physics for the thumb moving
-			if self._goingto:
-				self._attraction()
+			loop_time = var.time
+			while loop_time:
+				calc_time = 1
+				if loop_time > calc_time:
+					time = calc_time
+					loop_time = loop_time - calc_time
+				else:
+					time = loop_time
+					loop_time = 0
+				#~ if self._goingto:
+				self._attraction(time)
 				debugstring += ' v+adt=' + str(self._velocity)
-			self._friction()
-			debugstring += ' v+fdt=' + str(self._velocity) + ' dt=' + str(var.time)
-			self._move += self._velocity*var.time
+
+				self._friction(time)
+				debugstring += ' v+fdt=' + str(self._velocity) + ' dt=' + str(time)
+				self._move += self._velocity*time
 			self.rect = self.rect.move(int(round(self._move.real)),int(round(self._move.imag)))
-			self._move -= int(round(self._move.real)) + int(round(self._move.imag))*1j
-			#if self._goingto: print debugstring
-			#if self._blowing: self._blowstep()
-	#def _blowstep(self):
+			self._move -= int(round(self._move.real)) + int(round(self._move.imag))*1j # Subtract all the way the rect was really moved
+				#if self._goingto: print debugstring
+				#if self._blowing: self._blowstep(time)
+	#def _blowstep(self, time):
 		#"""For a smooth scaling. Costs to much resources in SDL, but likely to be implemented in OpenGL."""
 		#blowingspeed = 1.0 / 1000 # First number in seconds
-		#self._blowing += var.time * blowingspeed
+		#self._blowing += time * blowingspeed
 		#if self._blowing > 1: self._blowing = 1
 		#self._setheight(int(self._blowheight*self._blowing))
 		#if self._blowing > 1: self._blowing = 0

@@ -116,11 +116,13 @@ scrambled_eggs = enigmage.directory.MageDirNode(dir)
 
 meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)
 
+import random, pygame.time
+
 enigmage.var.tick()
 loopcount = 0
 while True:
 	enigmage.var.tick()
-	if enigmage.var.time > 1000: print "Delay in loop ", loopcount, ":", enigmage.var.time
+	if enigmage.var.time > 100: print "Delay in loop ", loopcount, ":", enigmage.var.time, "milliseconds"
 	loopcount += 1
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
@@ -136,3 +138,4 @@ while True:
 	meinesprites.update()
 	meinesprites.draw(enigmage.var.screen) # dirtyrects = meinesprites.draw(var.screen)
 	pygame.display.flip() # pygame.display.update(dirtyrects)
+
