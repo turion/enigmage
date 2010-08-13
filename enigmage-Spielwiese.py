@@ -2,35 +2,136 @@
 # -*- coding: utf-8 -*-
 
 """enigmage-Spielwiese
-Testing for enigmage components"""
+Testing for new enigmage and enigtree components"""
 
-#Teste den PriorityJobster ausführlich!
+import pygame.image, Image, enigmage
+import pygame.time
 
-import enigmage.job, time
+import enigtree.directory
 
-print 'Jetzt lade ich den priorityjobster.'
+pygame.display.set_mode((800, 600))
 
-loader = enigmage.job.PriorityJobster(time_per_loop=1000)
+node_big = enigtree.directory.DirNode('/home/turion/Fotos/selection enigmage_big/')
+node_sm = enigtree.directory.DirNode('/home/turion/Fotos/selection enigmage/')
 
-print 'Jetzt starte ich ihn.'
+paths = [node.path for node in node_big.progeny() + node_sm.progeny() if node.path[-4:] in ['.JPG', '.jpg'] ]
 
-loader.start()
+class Clocksum(object):
+	def __init__(self):
+		self.new()
+	def add(self, time):
+		self.last_time = time
+		self.sum = self.sum + time
+		print time
+	def new(self):
+		self.sum = 0
+	def total(self):
+		print 'Total:', self.sum
+		self.new()
+		
+clocksum = Clocksum()
 
-print 'Jetzt warte ich.'
+clock = pygame.time.Clock()
+clock.tick()
 
-time.sleep(2.5)
+print 'Loading pygame raw images'
 
-print 'Jetzt erzeuge ich den termjob.'
+raw_images = [pygame.image.load(path) for path in paths]
 
-termjob = enigmage.job.TermJob(hara="kiri")
+clocksum.add(clock.tick())
 
-print 'Jetzt schieße ich den Vogel ab.'
+print 'Converting pygame raw images'
 
-loader.pickup_job(termjob)
+conv_images = [image.convert() for image in raw_images]
 
-print 'Jetzt warte ich auf ihn.'
+clocksum.add(clock.tick())
 
-loader.join()
+print 'Resizing pygame to fullscreens'
 
-print 'Das wars.'
+pyfull_images = [enigmage.scale_surface_to_size(image, (800, 600)) for image in conv_images]
 
+clocksum.add(clock.tick())
+
+print 'Resizing pygame to thumbs'
+
+pythumb_images = [enigmage.fit_surface_to_thumb(image) for image in conv_images]
+
+clocksum.add(clock.tick())
+
+#~ print 'Resizing pygame fullscreen to thumbs'
+#~ 
+#~ pyfullthumb_images = [enigmage.fit_surface_to_thumb(image) for image in pyfull_images]
+
+#~ clocksum.add(clock.tick())
+
+clocksum.total()
+
+print '---------------------------'
+print 'Loading PIL'
+
+pil_images = [Image.open(path) for path in paths]
+
+clocksum.add(clock.tick())
+
+print 'Drafting PIL to fullscreen'
+
+#~ pilfull_images = [image.draft(image.mode, (800, 600)) for image in pil_images]
+for image in pil_images:
+	image.draft(image.mode, (800, 600))
+pilfull_images = pil_images
+
+clocksum.add(clock.tick())
+
+print 'Converting PIL fullscreen to pygame converted via string'
+
+piltopy_images = [pygame.image.fromstring(image.tostring(), image.size, image.mode).convert for image in pilfull_images]
+
+clocksum.add(clock.tick())
+clocksum.total()
+
+print '---------------------------'
+print 'Loading PIL'
+
+pil_images = [Image.open(path) for path in paths]
+
+clocksum.add(clock.tick())
+
+print 'Resizing PIL to fullscreen'
+
+pilfull_images = [image.resize((800, 600)) for image in pil_images]
+
+clocksum.add(clock.tick())
+
+print 'Converting PIL fullscreen to pygame converted via string'
+
+piltopy_images = [pygame.image.fromstring(image.tostring(), image.size, image.mode).convert for image in pilfull_images]
+
+clocksum.add(clock.tick())
+clocksum.total()
+
+print '----------------------------'
+print 'Loading PIL'
+
+pil_images = [Image.open(path) for path in paths]
+
+clocksum.add(clock.tick())
+
+print 'Converting PIL fullscreen to pygame converted via string'
+
+piltopy_images = [pygame.image.fromstring(image.tostring(), image.size, image.mode).convert() for image in pil_images]
+
+clocksum.add(clock.tick())
+
+print 'Resizing pygame to fullscreens'
+
+pyfull_images = [enigmage.scale_surface_to_size(image, (800, 600)) for image in piltopy_images]
+
+clocksum.add(clock.tick())
+
+print 'Resizing pygame to thumbs'
+
+pythumb_images = [enigmage.fit_surface_to_thumb(image) for image in piltopy_images]
+
+clocksum.add(clock.tick())
+
+clocksum.total()
