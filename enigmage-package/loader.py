@@ -16,7 +16,7 @@ class MageLoadJob(enigmage.job.PriorityJob):
 		kwargs['action'] = 'MageLoad'
 		enigmage.job.PriorityJob.__init__(self, *args, **kwargs)
 	def do(self):
-		#~ print "I will load a mage now"
+		print "I will load a mage now"
 		fullscreen, thumb = PIL_to_pygame_fullscreen_and_or_thumb_image(self.fullscreen_path, self.thumb_path)
 		#~ with enigmage.loop_lock:
 		if fullscreen:
@@ -51,6 +51,8 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 
 sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
 
+folder = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
+
 mage_loader = enigmage.jobster.PriorityJobster()
 mage_loader.start()
 
@@ -73,7 +75,6 @@ class LazyMageDirNode(enigmage.directory.MageDirNode):
 			mage_loader.pickup_job(job)
 			#~ mage_loader.sort_into_jobs(job)
 		else:
-			image = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
-			mage = enigmage.Mage(image, title=self.path) # This is ugly!!
+			mage = enigmage.Mage(folder, title=self.path) # This is ugly!!
 		return mage
 

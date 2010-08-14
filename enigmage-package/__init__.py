@@ -226,8 +226,8 @@ class Mage(pygame.sprite.Sprite):
 		debugstring = str(self) + ' bei ' + str(self.rect.center) + ' v=' + str(self._velocity)
 		if not self._show_as_fullscreen: # Doing the physics for the thumb moving
 			loop_time = var.time
-			while loop_time:
-				calc_time = 1
+			calc_time = 1
+			while loop_time:  # Bastian: ja, nur dass man diese schritte nochmal für die Physik unterteilt (Danke Bastian!)
 				if loop_time > calc_time:
 					time = calc_time
 					loop_time = loop_time - calc_time
@@ -246,7 +246,7 @@ class Mage(pygame.sprite.Sprite):
 				#if self._goingto: print debugstring
 				#if self._blowing: self._blowstep(time)
 	#def _blowstep(self, time):
-		#"""For a smooth scaling. Costs to much resources in SDL, but likely to be implemented in OpenGL."""
+		#"""For a smooth scaling. Costs too much resources in SDL, but likely to be implemented in OpenGL."""
 		#blowingspeed = 1.0 / 1000 # First number in seconds
 		#self._blowing += time * blowingspeed
 		#if self._blowing > 1: self._blowing = 1

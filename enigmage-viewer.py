@@ -131,7 +131,7 @@ while True:
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
-				enigmage.loader.mage_loader.pickup_job(enigmage.job.TermJob(priority=3)) # Wieso bringt das nix?
+				enigmage.loader.mage_loader.pickup_job(enigmage.job.TermJob(priority=3))
 				enigmage.quit()
 				sys.exit()
 			if event.key == pygame.K_RIGHT: meinesprites.focus_successor()
@@ -142,7 +142,7 @@ while True:
 	# events.pump oder so?
 	keys = pygame.key.get_pressed()
 	meinesprites.clear(enigmage.var.screen,enigmage.var.background)
-	meinesprites.update() # Bastian: ja, nur dass man diese schritte nochmal für die Physik unterteilt
+	meinesprites.update()
 	meinesprites.draw(enigmage.var.screen) # dirtyrects = meinesprites.draw(var.screen)
 	pygame.display.flip() # pygame.display.update(dirtyrects)
 
