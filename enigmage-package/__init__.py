@@ -6,7 +6,7 @@
 
 __ALL__ = [ 'directory', 'job', 'loader', 'jobster' ]
 
-import pygame, math
+import sys, pygame, math
 import enigtree
 
 #def main(bildname):
@@ -19,6 +19,12 @@ THUMB_SEPARATOR = 30 # Pixels between two thumbs
 
 def halleluja():
 	print "Hallojulia!"
+
+class enigmageError(Exception):
+	pass
+
+class eInitError(enigmageError):
+	pass
 
 class Var():
 	"""Holds various important global variables for the whole enigmage"""
@@ -33,7 +39,6 @@ class Var():
 		self.max_fps = max_fps
 		self.background = pygame.Surface(self.screen.get_size()).convert()
 		self.background.fill((0,0,0))
-		self.screen_rect = self.screen.get_rect()
 	def tick(self): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
 		if self._ticking:
 			self.time = self.clock.tick(self.max_fps)
@@ -44,8 +49,12 @@ class Var():
 	time = 0
 	done = 0
 
-def init(screen):
+def init(size, go_fullscreen=False):
 	global var
+	if go_fullscreen:
+		screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+	else:
+		screen = pygame.display.set_mode(size)
 	var = Var(screen)
 		
 	import threading
@@ -55,9 +64,10 @@ def init(screen):
 	loop_lock = threading.Lock()
 	return True
 
-def quit():
-	for service_stopper in stop_services: service_stopper()
-	return True
+def exit():
+	for service_stopper in stop_services:
+		service_stopper()
+	sys.exit()
 
 def perfect_fit(width1, height1, width2, height2):
 	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
@@ -98,47 +108,36 @@ def fit_surface_to_thumb(image, (width, height) = (None, None)):
 
 class Mage(pygame.sprite.Sprite):
 	"""enigmage Image handler"""
-	_movestep = 10.0
-	_velstep = 0.1
 	_move = 0.0+0.0j
 	_velocity = 0.0+0.0j
-	_goingto = False
 	_target = 0.0+0.0j
-	#_blowing = 0.0
-	#_blowheight = 0
-	_raw_image = None
-	_title = ''
 	def __str__(self):
 		#str = pygame.sprite.Sprite.__str__(self)
-		#if self._title: str += ' "' + self._title + '"'
+		#if self.title: str += ' "' + self.title + '"'
 		#return str
-		return self._title
-	def __init__(self, raw_image, raw_thumb=None, raw_fullscreen=None, drawrect=None, show_as_fullscreen=False, target_x = None, target_y = None, title=None):
-		"""raw_image contains all image information. For future performance enhancement it is possible to give thumb and fullscreen images as arguments."""
+		return str(self.title)
+	def __init__(self, raw_image, raw_thumb=None, raw_fullscreen=None, show_as_fullscreen=False, title=None, drawrect=None):
+		"""raw_image contains all image information. For performance enhancement it is possible to give thumb and fullscreen images as arguments."""
 		pygame.sprite.Sprite.__init__(self)
 		
-		if title: self._title = title
+		self.title = title
 		
 		self._raw_image = raw_image
 
 		self._show_as_fullscreen = show_as_fullscreen
+		
+		self.drawrect = drawrect # Also None is ok
+		
+		self.rect = pygame.Rect(0,0,0,0)
 
 		if raw_thumb == None:
 			raw_thumb = raw_image
-		self.thumb = fit_surface_to_thumb(raw_thumb)
+		self.thumb = raw_thumb
 		
-		if drawrect == None:
-			drawrect = var.screen_rect
-		self.drawrect = drawrect # Resizes self.fullscreen
 
 		if raw_fullscreen == None:
 			raw_fullscreen = raw_image
 		self.fullscreen = raw_fullscreen
-				
-		if target_x == None or target_y == None: 
-			self._movetarget((self._drawrect.centerx,self._drawrect.centery))
-		else:
-			self._movetarget((target_x, target_y))
 		
 		if show_as_fullscreen:
 			self.become_fullscreen()
@@ -150,22 +149,31 @@ class Mage(pygame.sprite.Sprite):
 	@image.setter
 	def image(self, image):
 		"""Has to be set before the mage can be shown or the rect of it accessed. Might somehow include a clipping rect in the future."""
-		rect = image.get_rect()
-		self._image, self.rect = image, rect
-		self._update_rect_to_target()
+		center = self.rect.center
+		self._image, self.rect.size = image, image.get_rect().size
+		self.rect.center = center
 	@property
 	def drawrect(self):
-		return self._drawrect
+		try:
+			return self._drawrect
+		except AttributeError:
+			return None
 	@drawrect.setter
 	def drawrect(self, drawrect):
+		if not self.drawrect and drawrect:
+			self.rect.center = drawrect.center
+			self._movetarget(drawrect.center)
 		self._drawrect = drawrect
-		#~ self.fullscreen = self._raw_fullscreen # Resizing is done by the property
+		try:
+			self.fullscreen = self.fullscreen  # UGLY
+		except AttributeError:
+			pass
 	@property
 	def thumb(self):
 		return self._thumb
 	@thumb.setter
 	def thumb(self, thumb):
-		thumb = fit_surface_to_thumb(thumb) # Does not resize if the size is alread correct
+		thumb = fit_surface_to_thumb(thumb) # Does not resize if the size is already correct
 		self._thumb = thumb
 		if not self._show_as_fullscreen:
 			self.image = self.thumb # UGLY
@@ -173,8 +181,9 @@ class Mage(pygame.sprite.Sprite):
 	def fullscreen(self):
 		return self._fullscreen
 	@fullscreen.setter
-	def fullscreen(self, fullscreen): # Needs drawrect to be set first
-		fullscreen = fit_surface_to_size(fullscreen, (self.drawrect.width, self.drawrect.height))  # Does not resize if the size is alread correct
+	def fullscreen(self, fullscreen):
+		if self.drawrect:
+			fullscreen = fit_surface_to_size(fullscreen, (self.drawrect.width, self.drawrect.height))  # Does not resize if the size is alread correct
 		self._fullscreen = fullscreen
 		if self._show_as_fullscreen:
 			self.image = self.fullscreen # UGLY
@@ -182,7 +191,7 @@ class Mage(pygame.sprite.Sprite):
 		self._target = target_x + target_y * 1.0j
 	def _update_rect_to_target(self):
 		if not self._show_as_fullscreen:
-			self.rect.centerx, self.rect.centery = int(round(self._target.real)), int(round(self._target.imag))
+			self.rect.center = int(round(self._target.real)), int(round(self._target.imag))
 	def beamto(self, (target_x, target_y)):
 		#print self, " is beaming to (", target_x, ",", target_y, ")"
 		"""Moves _target and subsequently the rect. Accepts float arguments"""
@@ -195,69 +204,45 @@ class Mage(pygame.sprite.Sprite):
 		#print self, " is going to (", target_x, ", ", target_y, ")"
 		try:
 			self._movetarget((target_x, target_y))
-			self._goingto = True
 		except TypeError:
-			print "Bad Parameters for Mage.goto((target_x,target_y))" # In this case, self._goingto is left untouched
+			print "Bad Parameters for Mage.goto((target_x,target_y))"
 	def _attraction(self, time):
 		strength = 0.00003
 
-		#weak_scale = 10 # Pixels
-		#anharmonicity = + 0.000005		
-		#bumpsize = 30 # Pixels
-		#bumpheight = 0
-		
-		snap = 2 # Pixels
 		distance = self._target - (self.rect.centerx + 
 		self.rect.centery * 1.0j)
-		#self._velocity += strength * distance * math.atan(abs(distance)/weak_scale) / (0.0001 + abs(distance))
-		#print (1 + anharmonicity * (abs(distance)**2))
-		#self._velocity += time * strength * distance * (1 + anharmonicity * (abs(distance)**2))
-		#self._velocity += time * strength * distance * (1 + bumpheight / (1 + (abs(distance)/bumpsize)**2))
 		self._velocity += time * strength * distance
-		if abs(distance) < snap and abs(self._velocity) * time < snap:
-			self._goingto = False
-			#print "Went to"
 	def _friction(self, time):
 		overall_friction = 0.003
 		air_friction = 4
 		quadratic_air_friction = 1
 		self._velocity -= time * overall_friction * self._velocity * (air_friction + quadratic_air_friction * abs(self._velocity)/time)
 	def update(self):
-		debugstring = str(self) + ' bei ' + str(self.rect.center) + ' v=' + str(self._velocity)
-		if not self._show_as_fullscreen: # Doing the physics for the thumb moving
-			loop_time = var.time
+		debugstring = str(self)
+		debugstring += ' bei ' + str(self.rect.center)
+		debugstring += ' v=' + str(self._velocity)
+		loop_time = var.time
+		while loop_time:
 			calc_time = 1
-			while loop_time:  # Bastian: ja, nur dass man diese schritte nochmal für die Physik unterteilt (Danke Bastian!)
-				if loop_time > calc_time:
-					time = calc_time
-					loop_time = loop_time - calc_time
-				else:
-					time = loop_time
-					loop_time = 0
-				#~ if self._goingto:
-				self._attraction(time)
-				debugstring += ' v+adt=' + str(self._velocity)
+			if loop_time > calc_time:
+				time = calc_time
+				loop_time = loop_time - calc_time
+			else:
+				time = loop_time
+				loop_time = 0
+			self._attraction(time)
+			debugstring += ' v+adt=' + str(self._velocity)
 
-				self._friction(time)
-				debugstring += ' v+fdt=' + str(self._velocity) + ' dt=' + str(time)
-				self._move += self._velocity*time
+			self._friction(time)
+			debugstring += ' v+fdt=' + str(self._velocity) + ' dt=' + str(time)
+			self._move += self._velocity*time
+		if not self._show_as_fullscreen:
 			self.rect = self.rect.move(int(round(self._move.real)),int(round(self._move.imag)))
 			self._move -= int(round(self._move.real)) + int(round(self._move.imag))*1j # Subtract all the way the rect was really moved
-				#if self._goingto: print debugstring
-				#if self._blowing: self._blowstep(time)
-	#def _blowstep(self, time):
-		#"""For a smooth scaling. Costs too much resources in SDL, but likely to be implemented in OpenGL."""
-		#blowingspeed = 1.0 / 1000 # First number in seconds
-		#self._blowing += time * blowingspeed
-		#if self._blowing > 1: self._blowing = 1
-		#self._setheight(int(self._blowheight*self._blowing))
-		#if self._blowing > 1: self._blowing = 0
-		
-		#if not self._drawrect.colliderect(self.rect): print '"MAMA! Bin weg!" - Dieser Hilferuf kam von ', self, '. Er befindet sich gerade bei ', self.rect.center, '.'
+			#if not self.drawrect.colliderect(self.rect): print '"MAMA! Bin weg!" - Dieser Hilferuf kam von ', self, '. Er befindet sich gerade bei ', self.rect.center, '.'
 	def become_thumb(self):
 		#~ if self._show_as_fullscreen:
 			self._show_as_fullscreen = False
-			self._goingto = True
 			self.image = self.thumb
 			self._update_rect_to_target()
 			#~ print "Thumb"
@@ -265,9 +250,8 @@ class Mage(pygame.sprite.Sprite):
 		#~ if not self._show_as_fullscreen:
 			self._show_as_fullscreen = True
 			self.image = self.fullscreen
-			self._goingto = False
-			self.rect.center = self._drawrect.center
-			#~ print "Full"
+			if self.drawrect:
+				self.rect.center = self.drawrect.center
 		# Der Gruppe bescheid sagen!
 	def toggle_fullscreen(self):
 		if self._show_as_fullscreen:
@@ -283,14 +267,20 @@ class Mage(pygame.sprite.Sprite):
 
 class Mages(pygame.sprite.LayeredUpdates):
 	"""Inherits LayeredUpdate. Inherited classes display the mages that are found in the tree rooted at central_node in a specific way."""
-	def __init__(self, drawrect, node):
+	def __init__(self, node, drawrect=None, visible = True):
 		"""node has to be enigtree.Node and contain enigmage.Mage as data."""
 		pygame.sprite.LayeredUpdates.__init__(self) # Die Mage werden von calculate_positions eingewiesen
+		if drawrect == None:
+			try:
+				drawrect = var.screen.get_rect()
+			except NameError:
+				raise eInitError("enigmage.init has to be called before creating instances of Mages!")
 		self.drawrect = drawrect
 
 		self._focussed_child = 0
 		self._central_node = None
 		self.central_node = node
+		self.visible = visible
 
 		self.add_mages()
 		self.calculate_positions() # Sprites zur Gruppe hinzufügen, Positionen berechnen, die in drawrect reinpassen
@@ -299,12 +289,12 @@ class Mages(pygame.sprite.LayeredUpdates):
 	def relevant_nodes(self):
 		return []
 	def add_mages(self):
-		#~ temp_group = pygame.sprite.Group(self.sprites())
 		self.empty()
-		for node in self.relevant_nodes():
+		relevant_nodes = self.relevant_nodes()
+		for node in relevant_nodes:
 			self.add(node.data)
-			#~ if not temp_group.has(node.data):
-				#~ node.data.beamto(self.drawrect.center)
+			if self.visible:
+				node.data.drawrect = self.drawrect
 	def calculate_positions(self):
 		"""To be inherited to actually display something."""
 		pass
@@ -313,7 +303,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 		pass
 	@property
 	def central_node(self):
-		return self._central_node # Internally, _central_node is used
+		return self._central_node
 	@central_node.setter
 	def central_node(self, node):
 		if self.central_node:
@@ -369,6 +359,9 @@ class Mages(pygame.sprite.LayeredUpdates):
 				self.zoom_out()
 				self.focus_predecessor() # This is NOT a recursion because when zoomed out, self.central_node will have childs
 				self.zoom_in()
+	def dance(self):
+		self.central_node.childs[self._focussed_child].data.dance()
+
 	# Noch eine Möglichkeit schaffen, dass ein Mage der Gruppe Bescheid sagen kann, wenn es become_fullscreen wird. Die anderen müssen dann so lange weg. Vielleicht bleibt es aber auch dabei, dass man sich einen Mage im Vollbild anschaut, indem man ganz reinzoomt und ihn als Hintergrund behält
 
 

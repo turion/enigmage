@@ -32,7 +32,7 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 	pygame_fullscreen = None
 	pygame_thumb = None
 	if drawrect == None:
-		drawrect = enigmage.var.screen_rect
+		drawrect = enigmage.var.screen.get_rect()
 
 	if fullscreen_path:
 		fullscreen = Image.open(fullscreen_path)
@@ -56,7 +56,11 @@ folder = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').co
 mage_loader = enigmage.jobster.PriorityJobster()
 mage_loader.start()
 
+def shoot_mage_loader():
+	mage_loader.pickup_job(enigmage.job.TermJob(priority=3))
+
 with enigmage.stop_services_lock:
+	enigmage.stop_services.append(shoot_mage_loader)
 	enigmage.stop_services.append(mage_loader.join)
 
 
