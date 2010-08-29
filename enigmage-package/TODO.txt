@@ -18,12 +18,6 @@ Aktuell:
 5. Alles zusammenstecken
 		var vernichten
 		Gedanken wegen Packages machen, vielleicht main() implementieren
-		Einstellungsdatei ausbauen
-			Die Einstellungsdatei sollte eine normale Pythondatei sein, die auf globale Variablen in enigmage-viewer.py zugreifen kann
-			Die Einstellungsdatei IST enigmage-viewer, siehe Abstraktion der Hauptschleife
-		Hauptschleife sollte abstrahiert werden, Kommandozeilenargumente, Tastatureingaben
-			so zeug vielleicht in enigmage.examples
-				Hauptschleife auch? hmjoaa
 
 4a. Dateiverwaltung
 	Via Nodes

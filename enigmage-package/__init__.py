@@ -50,6 +50,7 @@ class Var():
 	done = 0
 
 def init(size, go_fullscreen=False):
+	pygame.init()
 	global var
 	if go_fullscreen:
 		screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
