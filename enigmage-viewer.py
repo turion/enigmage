@@ -115,8 +115,8 @@ scrambled_eggs = enigmage.directory.MageDirNode(dir)
 
 
 meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)
+# Gedanken wegen Mage.update, Mages.update, Hauptschleife in var usw. machen
 
-import random, pygame.time
 
 enigmage.var.tick()
 loopcount = 0
@@ -131,7 +131,7 @@ while True:
 			if event.key == pygame.K_LEFT: meinesprites.focus_predecessor()
 			if event.key == pygame.K_DOWN: meinesprites.zoom_in()
 			if event.key == pygame.K_UP: meinesprites.zoom_out()
-			if event.key == pygame.K_d: scrambled_eggs.childs[0].data.dance()
+			if event.key == pygame.K_d: meinesprites.dance()
 	# events.pump oder so?
 	keys = pygame.key.get_pressed()
 	meinesprites.clear(enigmage.var.screen,enigmage.var.background)
