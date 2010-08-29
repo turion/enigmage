@@ -6,7 +6,7 @@
 
 __ALL__ = [ 'directory', 'job', 'loader', 'jobster' ]
 
-import sys, pygame, math
+import pygame, math
 import enigtree
 
 #def main(bildname):
@@ -67,7 +67,6 @@ def init(size, go_fullscreen=False):
 def exit():
 	for service_stopper in stop_services:
 		service_stopper()
-	sys.exit()
 
 def perfect_fit(width1, height1, width2, height2):
 	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
