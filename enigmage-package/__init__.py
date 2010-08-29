@@ -6,7 +6,7 @@
 
 __ALL__ = [ 'directory' ]
 
-import sys, pygame, math
+import pygame, math
 import enigtree
 
 #def main(bildname):
@@ -59,7 +59,7 @@ def init(size, go_fullscreen=False):
 	return True
 
 def exit():
-	sys.exit()
+	pass
 
 def perfect_fit(width1, height1, width2, height2):
 	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
