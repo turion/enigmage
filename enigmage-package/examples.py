@@ -12,7 +12,8 @@ def main_loop(mages_list, keyactions):
 	global loop
 	while loop:
 		enigmage.tick()
-		if enigmage.time > 100: print "Delay in loop ", loopcount, ":", enigmage.time, "milliseconds"
+		if enigmage.time > 100:
+			print "Delay in loop ", loopcount, ":", enigmage.time, "milliseconds"
 		loopcount += 1
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:

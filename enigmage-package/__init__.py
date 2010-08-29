@@ -29,18 +29,15 @@ class eInitError(enigmageError):
 initialised = False
 max_fps=40
 
-background = pygame.Surface(self.screen.get_size()).convert()
-background.fill((0,0,0))
 clock = None
 time = 0
 
-def tick(self): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
+def tick(): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
 	global clock, time
 	if clock:
 		time = clock.tick(max_fps)
 	else:
 		clock = pygame.time.Clock()
-
 
 def init(size, go_fullscreen=False):
 	pygame.init()
@@ -49,12 +46,16 @@ def init(size, go_fullscreen=False):
 		screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 	else:
 		screen = pygame.display.set_mode(size)
+	global background
+	background = pygame.Surface(screen.get_size()).convert()
+	background.fill((0,0,0))
 		
 	import threading
 	global stop_services_lock, stop_services, loop_lock
 	stop_services_lock = threading.Lock()
 	stop_services = []
 	loop_lock = threading.Lock()
+
 	global initialised
 	initialised = True
 	return True
@@ -220,17 +221,17 @@ class Mage(pygame.sprite.Sprite):
 		while loop_time:
 			calc_time = 1
 			if loop_time > calc_time:
-				time = calc_time
+				step_time = calc_time
 				loop_time = loop_time - calc_time
 			else:
-				time = loop_time
+				step_time = loop_time
 				loop_time = 0
-			self._attraction(time)
+			self._attraction(step_time)
 			debugstring += ' v+adt=' + str(self._velocity)
 
-			self._friction(time)
-			debugstring += ' v+fdt=' + str(self._velocity) + ' dt=' + str(time)
-			self._move += self._velocity*time
+			self._friction(step_time)
+			debugstring += ' v+fdt=' + str(self._velocity) + ' dt=' + str(step_time)
+			self._move += self._velocity*step_time
 		if not self._show_as_fullscreen:
 			self.rect = self.rect.move(int(round(self._move.real)),int(round(self._move.imag)))
 			self._move -= int(round(self._move.real)) + int(round(self._move.imag))*1j # Subtract all the way the rect was really moved
