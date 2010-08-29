@@ -26,6 +26,8 @@ class enigmageError(Exception):
 class eInitError(enigmageError):
 	pass
 
+initialised = False
+
 class Var():
 	"""Holds various important global variables for the whole enigmage"""
 	def __init__(self, screen = None, max_fps=40):
@@ -37,8 +39,6 @@ class Var():
 		self.background.fill((0,0,0))
 		self._ticking = 0
 		self.max_fps = max_fps
-		self.background = pygame.Surface(self.screen.get_size()).convert()
-		self.background.fill((0,0,0))
 	def tick(self): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
 		if self._ticking:
 			self.time = self.clock.tick(self.max_fps)
@@ -50,6 +50,7 @@ class Var():
 	done = 0
 
 def init(size, go_fullscreen=False):
+	pygame.init()
 	global var
 	if go_fullscreen:
 		screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
@@ -62,11 +63,15 @@ def init(size, go_fullscreen=False):
 	stop_services_lock = threading.Lock()
 	stop_services = []
 	loop_lock = threading.Lock()
+	global initialised
+	initialised = True
 	return True
 
 def exit():
 	for service_stopper in stop_services:
 		service_stopper()
+	global initialised
+	initialised = True
 
 def perfect_fit(width1, height1, width2, height2):
 	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
@@ -133,7 +138,6 @@ class Mage(pygame.sprite.Sprite):
 			raw_thumb = raw_image
 		self.thumb = raw_thumb
 		
-
 		if raw_fullscreen == None:
 			raw_fullscreen = raw_image
 		self.fullscreen = raw_fullscreen
