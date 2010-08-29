@@ -6,7 +6,7 @@
 
 __ALL__ = [ 'directory' ]
 
-import pygame, math
+import sys, pygame, math
 import enigtree
 
 #def main(bildname):
@@ -19,6 +19,12 @@ THUMB_SEPARATOR = 30 # Pixels between two thumbs
 
 def halleluja():
 	print "Hallojulia!"
+
+class enigmageError(Exception):
+	pass
+
+class eInitError(enigmageError):
+	pass
 
 class Var():
 	"""Holds various important global variables for the whole enigmage"""
@@ -43,10 +49,17 @@ class Var():
 	time = 0
 	done = 0
 
-def init(screen):
+def init(size, go_fullscreen=False):
 	global var
+	if go_fullscreen:
+		screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+	else:
+		screen = pygame.display.set_mode(size)
 	var = Var(screen)
 	return True
+
+def exit():
+	sys.exit()
 
 def perfect_fit(width1, height1, width2, height2):
 	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
@@ -245,9 +258,14 @@ class Mage(pygame.sprite.Sprite):
 
 class Mages(pygame.sprite.LayeredUpdates):
 	"""Inherits LayeredUpdate. Inherited classes display the mages that are found in the tree rooted at central_node in a specific way."""
-	def __init__(self, drawrect, node, visible = True):
+	def __init__(self, node, drawrect=None, visible = True):
 		"""node has to be enigtree.Node and contain enigmage.Mage as data."""
 		pygame.sprite.LayeredUpdates.__init__(self) # Die Mage werden von calculate_positions eingewiesen
+		if drawrect == None:
+			try:
+				drawrect = var.screen.get_rect()
+			except NameError:
+				raise eInitError("enigmage.init has to be called before creating instances of Mages!")
 		self.drawrect = drawrect
 
 		self._focussed_child = 0

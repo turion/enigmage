@@ -1,0 +1,82 @@
+As long as I am programming alone, this will be in german.
+
+Bereits geschafft:
+1.Sprites ausprobieren
+	Event loop, verwende gescheites timing
+2.Bilder verschieben
+3a Mage
+	Bewegung flüssig mit target und friction
+	Zoom in/Zoom out bzw. Fullscreen/Thumb
+3b. Mehrere Bilder gleichzeitig
+	Eigene Gruppe
+4z. Nodes statt:
+	Virtuelle Verzeichnisse, MageDirectory Klasse
+		aktives Verzeichnis mit Grundfunktionen zur Kommunikation mit einer Bildschirmgruppe
+
+Aktuell:
+
+5. Alles zusammenstecken
+		var vernichten
+		README erzeugen
+		Gedanken wegen Packages machen, vielleicht main() implementieren
+		Einstellungsdatei ausbauen
+			Die Einstellungsdatei sollte eine normale Pythondatei sein, die auf globale Variablen in enigmage-viewer.py zugreifen kann
+			Die Einstellungsdatei IST enigmage-viewer, siehe Abstraktion der Hauptschleife
+		Hauptschleife sollte abstrahiert werden, Kommandozeilenargumente, Tastatureingaben
+			so zeug in enigmage.examples
+
+4a. Dateiverwaltung
+	Via Nodes
+		Unterklassen davon, die tatsächlich etwas können, z.B. SQL, Dateisystem
+			"SQLMageNode" oder so durch und durch Objektorientiert
+				SQL-Daten nicht in data ablegen wegen Seit-/Abwärtskompatibilität
+				Alchemy richtig in den Griff kriegen
+		Selbstständiger DirectoryNode
+			Davon eine Unterklasse, die automatisch die Mages lädt?
+				Es fehlt noch Schreibzugriff
+			Extern:
+				enigtree.directory.DirNode.parent so umbauen, dass es auch den dynamisch erzeugen kann
+
+7. Performance verbessern
+		Multithreading
+			Hintergrundprozess, der Thumbs erstellt und Bilder vorlädt usw.
+				Den braucht man jetzt schon, damit es benutzbar wird
+				Den Prozess beim initialisieren in Var einbauen?
+				Zum Beschleunigen nicht alles laden
+					Spezielle Bibliothek verwenden
+		Nur die Mages anzeigen, die im Bildbereich sind! (Brauche ich das jetzt schon? Mal testen.)
+			Unbenutzte Mages aus dem Speicher löschen
+			Am besten diese Funktion schon in Mages einbauen? Das wird kompliziert! Wobei, eigentlich ist es einfach?
+
+
+Noch zu tun:
+4a. Dateiverwaltung
+	Schreibzugriff
+4b. SQL
+		Tags
+			Nicht nur Baumstruktur, sondern Mitgliedschaft in mehreren Gruppen via hierarchischer Tags
+			Hierarchie der Tags über tag_hierarchy ist mengenartig (ein Tag kann mehrere Übertags haben) und ausschließlich direkt (nicht transitiv: Tag3 Übertag für Tag2 und Tag 2 Übertag für Tag1 führt nicht dazu, dass Tag3 Übertag für Tag1. Man kann diese Struktur aber trotzdem baumartig benutzen. Dann kann man eine gewichtete Summation über alle Vorfahren durchführen)
+			Tagzugehörigkeit wird durch Coupling quantifiziert
+				Rating geschieht durch Tags (z.B. tag "kalenderhaft", "gut", "überbelichtet") und coupling
+6. Praktische Funktionen einbauen/ Eyecandy
+		~ enigmage.examples
+		"Einsortieren": Zwei Gruppen, eine links im halben Fullscreen die neuen Fotos durchblätternd, die rechts in einen Baum einsortiert werden
+		MageLabelled
+		LayeredUpdates anstatt Group verwenden um Überlappungen in den Griff zu bekommen
+		Baumartige Gruppen = TreeMages
+		Dateien nicht nur lesen, sondern auch schreiben
+			DirNode so bauen, dass er schreibbare Eigenschaften hat
+				Vielleicht auch dafür einen Hintergrundprozess starten
+7. Performance verbessern
+		Mages nur einmal laden, Überprüfung durch Gruppenzugehörigkeit
+		Bilder außerhalb der Sichtbereiches nicht zeichnen
+		DirtyRects
+		done
+		Multithreading
+			Hintergrundprozess, der Thumbs erstellt und Bilder vorlädt usw.
+8. Weitere Funktionen
+		OpenGL-Backend
+		Ideen in Wikistruktur
+		TeX-Snippets in der Datenbank, per dvipng ausgeben
+			Bibliothekabhängigkeiten in der Datenbank verzeichnen
+		Backups der Datenbank in lesbaren Formaten (SQL? HTML??)

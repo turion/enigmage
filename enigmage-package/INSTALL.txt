@@ -1,0 +1,11 @@
+1. Make sure you have satisfied all dependencies. So far, these are:
+	Necessary:
+	a. python (version 2.6 so far, 3 soon)
+	b. pygame
+	Optional:
+	c. Python Imaging Library
+	d. sqlite3
+2. Copy (or symlink) the package files to a directory /usr/share/local/lib/python2.6/enigmage or elsewhere so that it is importable by enigmage-viewer.py
+	Windows users freak out, start to cry or do whatever they want at this point.
+3. Write a enigmage-viewer.py or take the example
+4. Start (with command line arguments, if you choose to support it) python enigmage-viewer.py
