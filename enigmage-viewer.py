@@ -18,7 +18,7 @@ enigmage.init(size, go_fullscreen)
 	
 scrambled_eggs = enigmage.directory.MageDirNode(dir)
 
-meinesprites = enigmage.RamificationMages(scrambled_eggs, enigmage.var.screen.get_rect())
+meinesprites = enigmage.RamificationMages(scrambled_eggs, enigmage.screen.get_rect())
 
 import enigmage.examples, pygame
 
