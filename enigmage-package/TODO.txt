@@ -18,6 +18,8 @@ Aktuell:
 5. Alles zusammenstecken
 		var vernichten
 		Gedanken wegen Packages machen, vielleicht main() implementieren
+		initialised
+		eigene Exceptions definieren
 
 4a. Dateiverwaltung
 	Via Nodes
