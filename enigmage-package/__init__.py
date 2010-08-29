@@ -27,36 +27,28 @@ class eInitError(enigmageError):
 	pass
 
 initialised = False
+max_fps=40
 
-class Var():
-	"""Holds various important global variables for the whole enigmage"""
-	def __init__(self, screen = None, max_fps=40):
-		if screen == None:
-			size = 800, 600
-			self.screen = pygame.display.set_mode(size)
-		else: self.screen = screen
-		self.background = pygame.Surface(self.screen.get_size()).convert()
-		self.background.fill((0,0,0))
-		self._ticking = 0
-		self.max_fps = max_fps
-	def tick(self): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
-		if self._ticking:
-			self.time = self.clock.tick(self.max_fps)
-		else:
-			self._ticking = 1
-			self.clock = pygame.time.Clock()
-			self.time = 0
-	time = 0
-	done = 0
+background = pygame.Surface(self.screen.get_size()).convert()
+background.fill((0,0,0))
+clock = None
+time = 0
+
+def tick(self): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
+	global clock, time
+	if clock:
+		time = clock.tick(max_fps)
+	else:
+		clock = pygame.time.Clock()
+
 
 def init(size, go_fullscreen=False):
 	pygame.init()
-	global var
+	global screen
 	if go_fullscreen:
 		screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 	else:
 		screen = pygame.display.set_mode(size)
-	var = Var(screen)
 		
 	import threading
 	global stop_services_lock, stop_services, loop_lock
@@ -224,7 +216,7 @@ class Mage(pygame.sprite.Sprite):
 		debugstring = str(self)
 		debugstring += ' bei ' + str(self.rect.center)
 		debugstring += ' v=' + str(self._velocity)
-		loop_time = var.time
+		loop_time = time
 		while loop_time:
 			calc_time = 1
 			if loop_time > calc_time:
@@ -275,7 +267,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 		pygame.sprite.LayeredUpdates.__init__(self) # Die Mage werden von calculate_positions eingewiesen
 		if drawrect == None:
 			try:
-				drawrect = var.screen.get_rect()
+				drawrect = screen.get_rect()
 			except NameError:
 				raise eInitError("enigmage.init has to be called before creating instances of Mages!")
 		self.drawrect = drawrect

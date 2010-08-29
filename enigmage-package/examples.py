@@ -7,12 +7,12 @@ import enigmage, pygame
 
 loop = True
 def main_loop(mages_list, keyactions):
-	enigmage.var.tick()
+	enigmage.tick()
 	loopcount = 0
 	global loop
 	while loop:
-		enigmage.var.tick()
-		if enigmage.var.time > 100: print "Delay in loop ", loopcount, ":", enigmage.var.time, "milliseconds"
+		enigmage.tick()
+		if enigmage.time > 100: print "Delay in loop ", loopcount, ":", enigmage.time, "milliseconds"
 		loopcount += 1
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
@@ -20,9 +20,9 @@ def main_loop(mages_list, keyactions):
 		# events.pump oder so?
 		# keys = pygame.key.get_pressed() gibts auch
 		for mages in mages_list:
-			mages.clear(enigmage.var.screen,enigmage.var.background)
+			mages.clear(enigmage.screen,enigmage.background)
 			mages.update()
-			mages.draw(enigmage.var.screen) # dirtyrects = mages.draw(var.screen)
+			mages.draw(enigmage.screen) # dirtyrects = mages.draw(var.screen)
 		pygame.display.flip() # pygame.display.update(dirtyrects)
 	enigmage.exit()
 
