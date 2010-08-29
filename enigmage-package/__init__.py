@@ -103,7 +103,7 @@ class Mage(pygame.sprite.Sprite):
 		#str = pygame.sprite.Sprite.__str__(self)
 		#if self.title: str += ' "' + self.title + '"'
 		#return str
-		return self.title
+		return str(self.title)
 	def __init__(self, raw_image, raw_thumb=None, raw_fullscreen=None, show_as_fullscreen=False, title=None, drawrect=None):
 		"""raw_image contains all image information. For performance enhancement it is possible to give thumb and fullscreen images as arguments."""
 		pygame.sprite.Sprite.__init__(self)
@@ -205,7 +205,9 @@ class Mage(pygame.sprite.Sprite):
 		quadratic_air_friction = 1
 		self._velocity -= time * overall_friction * self._velocity * (air_friction + quadratic_air_friction * abs(self._velocity)/time)
 	def update(self):
-		debugstring = str(self) + ' bei ' + str(self.rect.center) + ' v=' + str(self._velocity)
+		debugstring = str(self)
+		debugstring += ' bei ' + str(self.rect.center)
+		debugstring += ' v=' + str(self._velocity)
 		loop_time = time
 		while loop_time:
 			calc_time = 1
