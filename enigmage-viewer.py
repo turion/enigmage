@@ -29,6 +29,7 @@ keyactions= { pygame.K_ESCAPE: enigmage.examples.end_main_loop,
 	pygame.K_RIGHT: meinesprites.focus_successor,
 	pygame.K_LEFT: meinesprites.focus_predecessor,
 	pygame.K_DOWN: meinesprites.zoom_in,
+	pygame.K_RETURN: meinesprites.zoom_in,
 	pygame.K_UP: meinesprites.zoom_out,
 	pygame.K_d: meinesprites.dance
 }
