@@ -392,20 +392,3 @@ class RamificationMages(Mages):
 			for node_index, node in enumerate(below):
 				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery + (1+node_index) * (THUMB_HEIGHT + THUMB_SEPARATOR)))
 
-class TreeMages(Mages):
-	indentation = 50
-	def __init__(self, node, *args, **kwargs):
-		self.root_node = node
-		Mages.__init__(self, node, *args, **kwargs)
-	def relevant_nodes(self):
-		nodes = [self.central_node]
-		for node in nodes:
-			if node.open:
-				nodes += node.childs
-		return nodes
-	def update_positions(self):
-		nodes = [self.central_node]
-		for node in nodes:
-			if node.open:
-				nodes += node.childs
-		# Put them somewhere
