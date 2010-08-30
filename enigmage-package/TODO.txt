@@ -15,9 +15,6 @@ Bereits geschafft:
 
 Aktuell:
 
-5. Alles zusammenstecken
-		eigene Exceptions definieren
-
 4a. Dateiverwaltung
 	Via Nodes
 		Unterklassen davon, die tatsächlich etwas können, z.B. SQL, Dateisystem
