@@ -17,7 +17,10 @@ def main_loop(mages_list, keyactions):
 		loopcount += 1
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
-				keyactions[event.key]()
+				try:
+					keyactions[event.key]()
+				except KeyError:
+					pass
 		# events.pump oder so?
 		# keys = pygame.key.get_pressed() gibts auch
 		for mages in mages_list:
