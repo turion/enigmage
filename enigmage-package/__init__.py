@@ -24,7 +24,11 @@ class enigmageError(Exception):
 	pass
 
 class eInitError(enigmageError):
-	pass
+	def __init__(self, caller = "doing this"):
+		self.caller = caller
+	def __str__(self):
+		return "enigmage.init has to be called before " + self.caller + "!"
+	
 
 initialised = False
 max_fps=40
@@ -261,7 +265,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 			try:
 				drawrect = screen.get_rect()
 			except NameError:
-				raise eInitError("enigmage.init has to be called before creating instances of Mages!")
+				raise eInitError("creating instances of Mages")
 		self.drawrect = drawrect
 
 		self._focussed_child = 0

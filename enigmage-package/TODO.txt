@@ -16,8 +16,6 @@ Bereits geschafft:
 Aktuell:
 
 5. Alles zusammenstecken
-		Gedanken wegen Packages machen, vielleicht main() implementieren
-		initialised
 		eigene Exceptions definieren
 
 4a. Dateiverwaltung
@@ -31,6 +29,7 @@ Aktuell:
 				Es fehlt noch Schreibzugriff
 			Extern:
 				enigtree.directory.DirNode.parent so umbauen, dass es auch den dynamisch erzeugen kann
+
 
 7. Performance verbessern
 		Multithreading
@@ -53,6 +52,7 @@ Noch zu tun:
 			Hierarchie der Tags über tag_hierarchy ist mengenartig (ein Tag kann mehrere Übertags haben) und ausschließlich direkt (nicht transitiv: Tag3 Übertag für Tag2 und Tag 2 Übertag für Tag1 führt nicht dazu, dass Tag3 Übertag für Tag1. Man kann diese Struktur aber trotzdem baumartig benutzen. Dann kann man eine gewichtete Summation über alle Vorfahren durchführen)
 			Tagzugehörigkeit wird durch Coupling quantifiziert
 				Rating geschieht durch Tags (z.B. tag "kalenderhaft", "gut", "überbelichtet") und coupling
+5. Alles zusammenstecken
 6. Praktische Funktionen einbauen/ Eyecandy
 		~ enigmage.examples
 		"Einsortieren": Zwei Gruppen, eine links im halben Fullscreen die neuen Fotos durchblätternd, die rechts in einen Baum einsortiert werden
