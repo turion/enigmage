@@ -70,15 +70,24 @@ def exit():
 	global initialised
 	initialised = True
 
-def perfect_fit(width1, height1, width2, height2):
+def is_perfect_fit(width1, height1, width2, height2):
 	return ( (width1 <= width2) and (height1 == height2) ) or ( (width1 == width2) and (height1 <= height2) )
+
+def perfect_fit(to_fit_width, to_fit_height, fit_into_width, fit_into_height):
+	if to_fit_height * fit_into_width > to_fit_width * fit_into_height:
+		width = fit_into_height * to_fit_width / to_fit_height
+		height = fit_into_height
+	else: 
+		width = fit_into_width
+		height = fit_into_width * to_fit_height / to_fit_width
+	return width, height
 
 def scale_surface_to_size(image, (width, height)):
 	"""Creates a new surface scaled to width x height. Currently only a wrapper for pygame.transform.scale, but could be replaced for something faster in the future"""
 	if (image.get_width(), image.get_height()) == (width, height): # Do not resize if the size is alread correct
 		return image
 	else:
-		print "I have to resize something to", width, height
+		print "I have to resize", image.get_width(), image.get_height(), "to", width, height
 		scaled_image = pygame.transform.scale(image, (width, height))
 		return scaled_image
 

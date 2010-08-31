@@ -1,11 +1,14 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
+"""enigmage.loader - Lazy image loading"""
+
 import enigmage.job, enigmage.jobster, enigmage.directory
 import enigmage
 import Image, pygame, pygame.image
 
-	
+if not enigmage.initialised:
+	raise enigmage.eInitError("importing enigmage.loader")
 
 class MageLoadJob(enigmage.job.PriorityJob):
 	def __init__(self, node, fullscreen_path=None, thumb_path=None, *args, **kwargs):
@@ -32,13 +35,16 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 	pygame_fullscreen = None
 	pygame_thumb = None
 	if drawrect == None:
-		drawrect = enigmage.var.screen.get_rect()
-
+		drawrect = enigmage.screen.get_rect()
+	print "Job with drawrect", drawrect
 	if fullscreen_path:
 		fullscreen = Image.open(fullscreen_path)
 		if not thumb_path:
 			thumb = fullscreen.copy()
-		fullscreen.resize((drawrect.width, drawrect.height))
+		resize_to_width, resize_to_height = enigmage.perfect_fit(drawrect.width, drawrect.height, fullscreen.size[0], fullscreen.size[1])
+		print "PIL resize to ", resize_to_width, resize_to_height
+		fullscreen.resize((resize_to_width, resize_to_height))
+		#~ fullscreen.thumbnail((drawrect.width, drawrect.height))
 		pygame_fullscreen = pygame.image.fromstring(fullscreen.tostring(), fullscreen.size, fullscreen.mode).convert()
 
 	if thumb_path:
@@ -50,6 +56,8 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 
 
 sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
+
+# Die hier auch vergrößern
 
 folder = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
 

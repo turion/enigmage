@@ -5,11 +5,7 @@ import enigmage.job
 import threading
 import pygame.time
 
-try:
-	enigmage.var
-except AttributeError:
-	raise ImportError("enigmage has to be initialised before this module can be imported!")
-
+# if pygame is not initialised, this should throw an exception here
 
 class Jobster(threading.Thread): # Kann man hier eine Priorität vergeben?
 	"""Job handling class with event loop. It needs pygame to be initialised and currently has no way to check it."""

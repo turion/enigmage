@@ -7,7 +7,7 @@ enigmage-viewer.py --- Example
 
 import enigmage, enigmage.directory
 
-dir = "/home/turion/Fotos/selection enigmage/"
+dir = "/home/turion/Fotos/selection enigmage/blub/"
 go_fullscreen = False
 
 if go_fullscreen:
@@ -16,8 +16,6 @@ else:
 	size = 800, 600
 enigmage.init(size, go_fullscreen)
 	
-#~ scrambled_eggs = enigmage.directory.MageDirNode(dir)
-
 import enigmage.loader
 scrambled_eggs = enigmage.loader.LazyMageDirNode(dir)
 
