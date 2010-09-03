@@ -19,7 +19,7 @@ class MageLoadJob(enigmage.job.PriorityJob):
 		kwargs['action'] = 'MageLoad'
 		enigmage.job.PriorityJob.__init__(self, *args, **kwargs)
 	def do(self):
-		print "I will load a mage now"
+		#~ print "I will load a mage now"
 		fullscreen, thumb = PIL_to_pygame_fullscreen_and_or_thumb_image(self.fullscreen_path, self.thumb_path)
 		#~ with enigmage.loop_lock:
 		if fullscreen:
@@ -36,22 +36,26 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 	pygame_thumb = None
 	if drawrect == None:
 		drawrect = enigmage.screen.get_rect()
-	print "Job with drawrect", drawrect
 	if fullscreen_path:
 		fullscreen = Image.open(fullscreen_path)
 		if not thumb_path:
 			thumb = fullscreen.copy()
-		resize_to_width, resize_to_height = enigmage.perfect_fit(drawrect.width, drawrect.height, fullscreen.size[0], fullscreen.size[1])
-		print "PIL resize to ", resize_to_width, resize_to_height
-		fullscreen.resize((resize_to_width, resize_to_height))
+		resize_to_width, resize_to_height = enigmage.perfect_fit(fullscreen.size[0], fullscreen.size[1], drawrect.width, drawrect.height)
+		#~ print "PIL drawrect", drawrect, "PIL resize fullscreen to ", resize_to_width, resize_to_height
+		fullscreen = fullscreen.resize((resize_to_width, resize_to_height))
 		#~ fullscreen.thumbnail((drawrect.width, drawrect.height))
 		pygame_fullscreen = pygame.image.fromstring(fullscreen.tostring(), fullscreen.size, fullscreen.mode).convert()
+		#~ print "PIL fullscreen has size", fullscreen.size, "pygame_fullscreen has size", pygame_fullscreen.get_width(), pygame_fullscreen.get_height()
+
 
 	if thumb_path:
 		thumb = Image.open(thumb_path)
 	if thumb:
-		thumb.thumbnail((enigmage.THUMB_HEIGHT, enigmage.THUMB_WIDTH))
+		#~ thumb.thumbnail((enigmage.THUMB_WIDTH, enigmage.THUMB_HEIGHT))
+		resize_to_width, resize_to_height = enigmage.perfect_fit(thumb.size[0], thumb.size[1], enigmage.THUMB_WIDTH, enigmage.THUMB_HEIGHT)
+		thumb = thumb.resize((resize_to_width, resize_to_height))
 		pygame_thumb = pygame.image.fromstring(thumb.tostring(), thumb.size, thumb.mode).convert()
+		#~ print "PIL thumb has size", thumb.size, "pygame_thumb has size", pygame_thumb.get_width(), pygame_thumb.get_height()
 	return pygame_fullscreen, pygame_thumb
 
 
@@ -59,7 +63,8 @@ sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_im
 
 # Die hier auch vergrößern
 
-folder = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
+#~ folder = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
+folder_fullscreen, folder_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/48x48/places/folder.png', None)
 
 mage_loader = enigmage.jobster.PriorityJobster()
 mage_loader.start()
@@ -79,14 +84,18 @@ class LazyMageDirNode(enigmage.directory.MageDirNode):
 	def init_data(self, *args, **kwargs):
 		if self.isfile:
 			global sandglass_fullscreen, sandglass_thumb
+			# Schönerweise sollte man das dict anlegen. Aber dafür braucht man die Information über das drawrect vor der Instanzierung des Mage
+			#~ print "Doing tux mage"
 			mage = enigmage.Mage(sandglass_fullscreen, raw_fullscreen=sandglass_fullscreen, raw_thumb=sandglass_thumb) # Ugly: raw_image should be something else
+			#~ print "Did tux mage"
 			
 			job = MageLoadJob(self, fullscreen_path=self.path, thumb_path=self.path)
 			
 			global mage_loader
 			mage_loader.pickup_job(job)
-			#~ mage_loader.sort_into_jobs(job)
 		else:
-			mage = enigmage.Mage(folder, title=self.path) # This is ugly!!
+			#~ print "Doing folder mage"
+			mage = enigmage.Mage(folder_fullscreen, raw_fullscreen=folder_fullscreen, raw_thumb=folder_thumb, title=self.path) # This is ugly!!
+			#~ print "Did folder mage"
 		return mage
 

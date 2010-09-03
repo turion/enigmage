@@ -7,7 +7,7 @@ enigmage-viewer.py --- Example
 
 import enigmage, enigmage.directory
 
-dir = "/home/turion/Fotos/selection enigmage/blub/"
+dir = "/home/turion/Fotos/selection enigmage_big/"
 go_fullscreen = False
 
 if go_fullscreen:
