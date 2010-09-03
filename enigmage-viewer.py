@@ -5,12 +5,12 @@
 enigmage-viewer.py --- Example
 """
 
-import enigmage, enigmage.directory, sys
+import enigmage, enigmage.directory, sys, os.path
 
 try:
 	dir = sys.argv[1]
 except IndexError:
-	dir = "/"
+	dir = os.path.expanduser('~')
 go_fullscreen = False
 
 if go_fullscreen:
