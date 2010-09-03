@@ -5,9 +5,12 @@
 enigmage-viewer.py --- Example
 """
 
-import enigmage, enigmage.directory
+import enigmage, enigmage.directory, sys
 
-dir = "/home/turion/Fotos/selection enigmage_big/"
+try:
+	dir = sys.argv[1]
+except IndexError:
+	dir = "/"
 go_fullscreen = False
 
 if go_fullscreen:
