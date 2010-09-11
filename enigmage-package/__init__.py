@@ -232,7 +232,7 @@ class Mage(pygame.sprite.Sprite):
 		debugstring += ' v=' + str(self._velocity)
 		loop_time = time
 		while loop_time:
-			calc_time = 1
+			calc_time = 30 # This should be more dynamic in the future
 			if loop_time > calc_time:
 				step_time = calc_time
 				loop_time = loop_time - calc_time

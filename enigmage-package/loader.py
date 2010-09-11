@@ -27,6 +27,7 @@ class MageLoadJob(enigmage.job.PriorityJob):
 		if thumb:
 			self.node.data.thumb = thumb
 		# Find a way to refresh .image
+		enigmage.job.PriorityJob.do(self)
 
 
 def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, drawrect=None): # Liefert die die richtigen Größen? Dauert das Resize zu lang?
@@ -89,10 +90,10 @@ class LazyMageDirNode(enigmage.directory.MageDirNode):
 			mage = enigmage.Mage(sandglass_fullscreen, raw_fullscreen=sandglass_fullscreen, raw_thumb=sandglass_thumb) # Ugly: raw_image should be something else
 			#~ print "Did tux mage"
 			
-			job = MageLoadJob(self, fullscreen_path=self.path, thumb_path=self.path)
+			self.job = MageLoadJob(self, fullscreen_path=self.path, thumb_path=self.path)
 			
 			global mage_loader
-			mage_loader.pickup_job(job)
+			mage_loader.pickup_job(self.job) # For priority stuff later
 		else:
 			#~ print "Doing folder mage"
 			mage = enigmage.Mage(folder_fullscreen, raw_fullscreen=folder_fullscreen, raw_thumb=folder_thumb, title=self.path) # This is ugly!!

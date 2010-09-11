@@ -23,7 +23,8 @@ Aktuell:
 				Alchemy richtig in den Griff kriegen
 		Selbstständiger DirectoryNode
 			Davon eine Unterklasse, die automatisch die Mages lädt?
-				Es fehlt noch Schreibzugriff
+				Sinnvollere Priorities vergeben, so dass die Bilder, die man gerade anschauen will, gleich geladen werden
+			Es fehlt noch Schreibzugriff
 			Extern:
 				enigtree.directory.DirNode.parent so umbauen, dass es auch den dynamisch erzeugen kann
 
@@ -37,7 +38,8 @@ Aktuell:
 					Spezielle Bibliothek verwenden
 		Nur die Mages anzeigen, die im Bildbereich sind! (Brauche ich das jetzt schon? Mal testen.)
 			Unbenutzte Mages aus dem Speicher löschen
-			Am besten diese Funktion schon in Mages einbauen? Das wird kompliziert! Wobei, eigentlich ist es einfach?
+			Am besten diese Funktion schon in Mages einbauen? Das wird kompliziert! Wobei, eigentlich ist es einfach? Ne lieber doch in Mages
+		Loop Lock?
 
 
 Noch zu tun:
