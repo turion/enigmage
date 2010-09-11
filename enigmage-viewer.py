@@ -5,7 +5,7 @@
 enigmage-viewer.py --- Example
 """
 
-import enigmage, enigmage.directory
+import enigmage, enigmage.directory, sys, os.path
 
 try:
 	dir = sys.argv[1]
