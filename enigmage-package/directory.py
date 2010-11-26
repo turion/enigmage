@@ -16,7 +16,7 @@ class MageDirNode(enigtree.directory.DirNode):
 		if self.isfile:
 			image = pygame.image.load(self.path).convert()
 		else:
-			image = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
+			image = pygame.image.load('inode-directory.png').convert()
 		mage = enigmage.Mage(image, title=self.path)
 		if debug_index > 100:
 			#~ raise Exception
