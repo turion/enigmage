@@ -60,12 +60,12 @@ def PIL_to_pygame_fullscreen_and_or_thumb_image(fullscreen_path, thumb_path, dra
 	return pygame_fullscreen, pygame_thumb
 
 
-sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/128x128/apps/tux.png', None)
+sandglass_fullscreen, sandglass_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('Tux.png', None)
 
 # Die hier auch vergrößern
 
 #~ folder = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
-folder_fullscreen, folder_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('/usr/share/icons/oxygen/48x48/places/folder.png', None)
+folder_fullscreen, folder_thumb = PIL_to_pygame_fullscreen_and_or_thumb_image('inode-directory.png', None)
 
 mage_loader = enigmage.jobster.PriorityJobster()
 mage_loader.start()
