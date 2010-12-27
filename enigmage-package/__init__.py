@@ -18,7 +18,7 @@ def halleluja():
 	
 
 initialised = False
-max_fps=40
+MAX_FPS=40
 
 clock = None
 time = 0
@@ -26,7 +26,7 @@ time = 0
 def tick(): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
 	global clock, time
 	if clock:
-		time = clock.tick(max_fps)
+		time = clock.tick(MAX_FPS)
 	else:
 		clock = pygame.time.Clock()
 

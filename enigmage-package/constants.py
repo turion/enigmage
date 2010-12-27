@@ -11,10 +11,10 @@ THUMB_HEIGHT = 150
 THUMB_WIDTH = THUMB_SIZE
 THUMB_SEPARATOR = 30 # Pixels between two thumbs
 
-class enigmageError(Exception):
+class EnigmageError(Exception):
 	pass
 
-class eInitError(enigmageError):
+class InitError(EnigmageError):
 	"""This error should be raised whenever something accesses some enigmage functionality that cannot be accessed before initialising enigmage, i.e. runtime objects like the screen."""
 	def __init__(self, caller = "doing this"):
 		self.caller = caller
