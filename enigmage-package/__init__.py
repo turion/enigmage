@@ -8,26 +8,13 @@ __ALL__ = [ 'directory' ]
 
 import pygame, math
 import enigtree
+from constants import *
 
 #def main(bildname):
-
-THUMB_SIZE = 200
-THUMB_HEIGHT = 150
-THUMB_WIDTH = THUMB_SIZE
-THUMB_SEPARATOR = 30 # Pixels between two thumbs
 
 
 def halleluja():
 	print "Hallojulia!"
-
-class enigmageError(Exception):
-	pass
-
-class eInitError(enigmageError):
-	def __init__(self, caller = "doing this"):
-		self.caller = caller
-	def __str__(self):
-		return "enigmage.init has to be called before " + self.caller + "!"
 	
 
 initialised = False
