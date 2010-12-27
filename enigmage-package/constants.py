@@ -14,6 +14,9 @@ THUMB_SEPARATOR = 30 # Pixels between two thumbs
 class EnigmageError(Exception):
 	pass
 
+class EnigmageValueError(EnigmageError, ValueError):
+	pass
+
 class InitError(EnigmageError):
 	"""This error should be raised whenever something accesses some enigmage functionality that cannot be accessed before initialising enigmage, i.e. runtime objects like the screen."""
 	def __init__(self, caller = "doing this"):
