@@ -11,7 +11,7 @@ THUMB_HEIGHT = 150
 THUMB_WIDTH = THUMB_SIZE
 THUMB_SEPARATOR = 30 # Pixels between two thumbs
 
-class EnigmageError(Exception):
+class EnigmageError(StandardError):
 	pass
 
 class EnigmageValueError(EnigmageError, ValueError):
