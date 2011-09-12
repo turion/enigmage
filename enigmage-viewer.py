@@ -74,7 +74,7 @@ import os, sys, pygame, pygame.sprite
 pygame.init()
 
 os.chdir('/')
-dir = os.path.expanduser('~') + '/'
+dir = os.path.expanduser('~') + '/Fotos/selection enigmage/'
 settings_file_path = os.path.join(dir, '.enigmage')
 if os.path.exists(settings_file_path):
 	if os.path.isfile(settings_file_path):
@@ -83,8 +83,10 @@ if os.path.exists(settings_file_path):
 			fullscreen = settings_file.readline()
 	else:
 		print "You messed up with .enigmage!"
+		fullscreen = "no"
 else:
 	print "Please create .enigmage!"
+	fullscreen = "no"
 	
 
 maxbildversize = 300
