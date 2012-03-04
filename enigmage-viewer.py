@@ -82,10 +82,10 @@ if os.path.exists(settings_file_path):
 			dir = settings_file.readline()[:-1]
 			fullscreen = settings_file.readline()
 	else:
-		print "You messed up with .enigmage!"
+		print("You messed up with .enigmage!")
 		fullscreen = "no"
 else:
-	print "Please create .enigmage!"
+	print("Please create .enigmage!")
 	fullscreen = "no"
 	
 
@@ -113,7 +113,8 @@ enigmage.var.tick()
 loopcount = 0
 while True:
 	enigmage.var.tick()
-	if enigmage.var.time > 1000: print "Delay in loop ", loopcount, ":", enigmage.var.time
+	if enigmage.var.time > 1000:
+		print("Delay in loop ", loopcount, ":", enigmage.var.time)
 	loopcount += 1
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:

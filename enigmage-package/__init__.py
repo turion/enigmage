@@ -18,7 +18,7 @@ THUMB_SEPARATOR = 30 # Pixels between two thumbs
 
 
 def halleluja():
-	print "Hallojulia!"
+	print("Hallojulia!")
 
 class Var():
 	"""Holds various important global variables for the whole enigmage"""
@@ -53,8 +53,9 @@ def init(screen):
 # return image, thumb
 
 
-def scale_surface_to_size(image, (width, height)):
+def scale_surface_to_size(image, dimensions):
 	"""Creates a new surface scaled to width x height. Currently only a wrapper for pygame.transform.scale, but could be replaced for something faster in the future"""
+	(width, height) = dimensions
 	scaled_image = pygame.transform.scale(image, (width, height))
 	return scaled_image
 
@@ -68,18 +69,17 @@ def scale_surface_to_width(image, width):
 	height = (width * image.get_height()) / image.get_width()
 	return scale_surface_to_size(image, (int(round(width)), int(round(height))))
 
-def fit_surface_to_size(image, (width, height)):
+def fit_surface_to_size(image, dimensions):
 	"""Creates a new surface that fits into a width x height box"""
+	(width, height) = dimensions
 	if float(image.get_height())*width/(image.get_width()*height) > 1:
 		return scale_surface_to_height(image, height)
 	else:
 		return scale_surface_to_width(image, width)
 
-def fit_surface_to_thumb(image, (width, height) = (None, None)):
+def fit_surface_to_thumb(image, dimensions=(None, None)):
 	"""Creates a thumb from a surface. The height of the thumb is THUMB_HEIGHT. More sophisticated features are likely to be added."""
-	#if height == None: height = THUMB_HEIGHT
-	#if width == None: return scale_surface_to_height(image, height)
-	#else return scale_surface_to_size(image, (width, height))
+	(width, height) = dimensions
 	return fit_surface_to_size(image, (THUMB_WIDTH, THUMB_HEIGHT))
 
 
@@ -152,26 +152,29 @@ class Mage(pygame.sprite.Sprite):
 		#self._move -= self._movestep * 1.0j
 	#def down(self):
 		#self._move += self._movestep * 1.0j
-	def _movetarget(self, (target_x, target_y)):
+	def _movetarget(self, dimensions):
+		(target_x, target_y) = dimensions
 		self._target = target_x + target_y * 1.0j
 	def _update_rect_to_target(self):
 		if not self._show_as_fullscreen:
 			self.rect.centerx, self.rect.centery = int(round(self._target.real)), int(round(self._target.imag))
-	def beamto(self, (target_x, target_y)):
+	def beamto(self, dimensions):
 		#print self, " is beaming to (", target_x, ", ", target_y, ")"
 		"""Moves _target and subsequently the rect. Accepts float arguments"""
+		(target_x, target_y) = dimensions
 		try:
 			self._movetarget((target_x, target_y))
 			self._update_rect_to_target()
 		except TypeError:
-			print "Bad Parameters for Mage.beamto((target_x,target_y))"
-	def goto(self, (target_x, target_y)):
+			print("Bad Parameters for Mage.beamto((target_x,target_y))")
+	def goto(self, dimensions):
 		#print self, " is going to (", target_x, ", ", target_y, ")"
+		(target_x, target_y) = dimensions
 		try:
 			self._movetarget((target_x, target_y))
 			self._goingto = True
 		except TypeError:
-			print "Bad Parameters for Mage.goto((target_x,target_y))" # In this case, self._goingto is left untouched
+			print("Bad Parameters for Mage.goto((target_x,target_y))") # In this case, self._goingto is left untouched
 	def _attraction(self):
 		strength = 0.00003
 
@@ -218,8 +221,9 @@ class Mage(pygame.sprite.Sprite):
 		#if self._blowing > 1: self._blowing = 0
 		
 		#if not self._drawrect.colliderect(self.rect): print '"MAMA! Bin weg!" - Dieser Hilferuf kam von ', self, '. Er befindet sich gerade bei ', self.rect.center, '.'
-	def _setsize(self, (width, height)):
+	def _setsize(self, dimensions):
 		"""Manually set the shown image to a resized thumb or fullscreen"""
+		(width, height) = dimensions
 		if self._thumb: show_image = self.thumb
 		else: show_image = self.fullscreen
 		self.assign_image(fit_surface_to_size(show_image, (width, height)))
@@ -311,7 +315,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 			self.calculate_positions()
 			self.update_positions()
 		else:
-			print "Warning: ", self.central_node, " has no attribute parent!"
+			print("Warning: ", self.central_node, " has no attribute parent!")
 	def focus_successor(self):
 		if self.central_node.childs: # Means that thumbs are floating in front, central_node is background
 			if self._focussed_child < len(self.central_node.childs)-1:

@@ -1,3 +1,4 @@
+
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -15,5 +16,5 @@ enkel = enigtree.Node(parent=child1, data="Kleener")
 enkel2 = enigtree.Node(parent=child2, data="Der andere Kleene")
 urenkel = enigtree.Node(parent=enkel, data="Der ganz Kleene")
 
-print child1, "sagt: Mein Nachfolger ist", child2
-print parent.elaborate_str()
+print("{} sagt: Mein Nachfolger ist {}".format(child1, child2))
+print(parent.elaborate_str())

@@ -20,7 +20,7 @@ class MageDirNode(enigtree.directory.DirNode):
 		mage = enigmage.Mage(image, title=self.path)
 		if debug_index > 100:
 			#~ raise Exception
-			print "Warning: Too many mages loaded!"
+			print("Warning: Too many mages loaded!")
 		return mage
 	def child_accepted(self, child_path):
 		full_child_path = os.path.join(self.path, child_path)
