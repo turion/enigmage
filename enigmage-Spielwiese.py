@@ -6,4 +6,4 @@
 Testing for new enigmage and enigraph components"""
 
 import enigmage
-import enigmage.directory
+import enigmage.magefsnode

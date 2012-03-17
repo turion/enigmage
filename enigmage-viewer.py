@@ -68,7 +68,7 @@ Noch zu tun:
 """
 
 import enigraph
-import enigmage, enigmage.directory
+import enigmage, enigmage.magefsnode
 
 import os, sys, pygame, pygame.sprite
 
@@ -102,7 +102,7 @@ else:
 enigmage.init(screen)
 
 	
-scrambled_eggs = enigmage.directory.MageDirNode(dir)
+scrambled_eggs = enigmage.magefsnode.MageFSNode(dir)
 
 
 meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)

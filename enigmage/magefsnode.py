@@ -1,8 +1,8 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""enigmage.directory
-Provides a subclass of a directory node that returns all images in a directory"""
+"""enigmage.magefsnode
+Provides a subclass of an fsnode that returns all images in a directory"""
 
 import os
 import pygame
@@ -11,8 +11,9 @@ import enigraph, enigraph.fsnode
 
 debug_index = 0
 
-class MageDirNode(enigraph.fsnode.FSNode):
-	def init_data(self, *args, **kwargs):
+class MageFSNode(enigraph.fsnode.FSNode):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		global debug_index
 		debug_index = debug_index + 1 # Warning if too many Mages are being loaded
 		#~ print "Loading ", self.path
@@ -25,10 +26,10 @@ class MageDirNode(enigraph.fsnode.FSNode):
 			#~ raise Exception
 			print("Warning: Too many mages loaded!")
 		return mage
-	def child_accepted(self, child_path):
+	def child_accepted(self, child_path): # FIXME
 		full_child_path = os.path.join(self.path, child_path)
 		return enigtree.directory.DirNode.child_accepted(self, child_path) and ( os.path.isdir(full_child_path) or (os.path.isfile(full_child_path) and child_path[-4:] in ('.JPG', '.jpg', 'jpeg', 'JPEG')) )
-	def sort_childs(self):
+	def sort_childs(self): # FIXME
 		childs_dirs = [child for child in self._childs if child.isdir]
 		childs_files = [child for child in self._childs if child.isfile]
 		childs_dirs.sort(key= lambda child:child.path)
