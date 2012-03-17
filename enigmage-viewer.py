@@ -67,7 +67,8 @@ Noch zu tun:
 8. OpenGL-Backend
 """
 
-import enigmage, enigtree, enigmage.directory
+import enigraph
+import enigmage, enigmage.directory
 
 import os, sys, pygame, pygame.sprite
 

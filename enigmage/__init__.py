@@ -7,7 +7,7 @@
 __ALL__ = [ 'directory' ]
 
 import pygame, math
-import enigtree
+import enigraph
 
 #def main(bildname):
 
@@ -253,7 +253,7 @@ class Mage(pygame.sprite.Sprite):
 class Mages(pygame.sprite.LayeredUpdates):
 	"""Inherits LayeredUpdate. Inherited classes display the mages that are found in the tree rooted at central_node in a specific way."""
 	def __init__(self, drawrect, node):
-		"""node has to be enigtree.Node and contain enigmage.Mage as data."""
+		"""node has to be enigraph.Node and contain enigmage.Mage as data."""
 		pygame.sprite.LayeredUpdates.__init__(self) # Die Mage werden von calculate_positions eingewiesen
 		self.drawrect = drawrect
 

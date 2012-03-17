@@ -4,11 +4,14 @@
 """enigmage.directory
 Provides a subclass of a directory node that returns all images in a directory"""
 
-import os, pygame, enigmage, enigtree, enigtree.directory
+import os
+import pygame
+import enigmage
+import enigraph, enigraph.fsnode
 
 debug_index = 0
 
-class MageDirNode(enigtree.directory.DirNode):
+class MageDirNode(enigraph.fsnode.FSNode):
 	def init_data(self, *args, **kwargs):
 		global debug_index
 		debug_index = debug_index + 1 # Warning if too many Mages are being loaded
