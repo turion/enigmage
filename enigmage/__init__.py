@@ -290,15 +290,15 @@ class Mages(pygame.sprite.LayeredUpdates):
 		self._central_node = node
 		self.central_node.data.become_fullscreen()
 		if self.central_node.favourite_child:
-			self._focussed_child = self.central_node.childs.index(self.central_node.favourite_child)
+			self._focussed_child = self.central_node.children.index(self.central_node.favourite_child)
 		else:
 			self._focussed_child = 0
 		#self.add_mages()
 		#self.calculate_positions() # Positionen berechnen, die in drawrect reinpassen
 		#self.update_positions() # Sprites an die Positionen verschieben
 	def zoom_in(self):
-		if self.central_node.childs:
-			self.central_node = self.central_node.childs[self._focussed_child]
+		if self.central_node.children:
+			self.central_node = self.central_node.children[self._focussed_child]
 			#~ print "Zooming in to ", self.central_node
 			self.add_mages()
 			self.calculate_positions()
@@ -317,18 +317,18 @@ class Mages(pygame.sprite.LayeredUpdates):
 		else:
 			print("Warning: ", self.central_node, " has no attribute parent!")
 	def focus_successor(self):
-		if self.central_node.childs: # Means that thumbs are floating in front, central_node is background
-			if self._focussed_child < len(self.central_node.childs)-1:
+		if self.central_node.children: # Means that thumbs are floating in front, central_node is background
+			if self._focussed_child < len(self.central_node.children)-1:
 				self._focussed_child += 1
 				self.calculate_positions()
 				self.update_positions()
 		else: # No thumbs are floating in front, central_node is foreground
 			if self.central_node.successor:
 				self.zoom_out()
-				self.focus_successor() # This is NOT a recursion because when zoomed out, self.central_node will have childs
+				self.focus_successor() # This is NOT a recursion because when zoomed out, self.central_node will have children
 				self.zoom_in()
 	def focus_predecessor(self):
-		if self.central_node.childs:
+		if self.central_node.children:
 			if self._focussed_child > 0:
 				self._focussed_child -= 1
 				self.calculate_positions()
@@ -336,7 +336,7 @@ class Mages(pygame.sprite.LayeredUpdates):
 		else:
 			if self.central_node.predecessor:
 				self.zoom_out()
-				self.focus_predecessor() # This is NOT a recursion because when zoomed out, self.central_node will have childs
+				self.focus_predecessor() # This is NOT a recursion because when zoomed out, self.central_node will have children
 				self.zoom_in()
 	# Noch eine Möglichkeit schaffen, dass ein Mage der Gruppe Bescheid sagen kann, wenn es become_fullscreen wird. Die anderen müssen dann so lange weg. Vielleicht bleibt es aber auch dabei, dass man sich einen Mage im Vollbild anschaut, indem man ganz reinzoomt und ihn als Hintergrund behält
 
@@ -344,13 +344,13 @@ class Mages(pygame.sprite.LayeredUpdates):
 
 class RamificationMages(Mages):
 	def relevant_nodes(self):
-		return [self.central_node] + self.central_node.progeny(2)
+		return [self.central_node] + list(self.central_node.progeny(generations=2))
 	def _main_line(self):
 		#main_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible	
-		if self.central_node.childs:
-			above = self.central_node.childs[self._focussed_child+1:]
-			middle = self.central_node.childs[self._focussed_child]
-			below = self.central_node.childs[:self._focussed_child]
+		if self.central_node.children:
+			above = self.central_node.children[self._focussed_child+1:]
+			middle = self.central_node.children[self._focussed_child]
+			below = self.central_node.children[:self._focussed_child]
 			below.reverse()
 			#~ print 'Mainline of ', self.central_node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
 			self._sub_line(middle, 0)
@@ -364,14 +364,14 @@ class RamificationMages(Mages):
 		# Favourite child in die Mitte, ansonsten Mitte nach oben
 		if node.favourite_child:
 			self.remove(node.data)
-			middle_index = node.childs.index(node.favourite_child)
-			above = node.childs[middle_index+1:]
+			middle_index = node.children.index(node.favourite_child)
+			above = node.children[middle_index+1:]
 			middle = node.favourite_child
-			below = node.childs[:middle_index]
+			below = node.children[:middle_index]
 			below.reverse()
 		else:
 			middle = node
-			above = node.childs
+			above = node.children
 			below = []
 		#~ print "Subline at ", offset, " of ", node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
 		if middle:

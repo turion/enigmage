@@ -101,7 +101,6 @@ else:
 
 enigmage.init(screen)
 
-	
 scrambled_eggs = enigmage.magefsnode.MageFSNode(dir)
 
 
