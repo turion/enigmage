@@ -35,13 +35,22 @@ class BackportNode(enigraph.fsnode.FSNode):
 		except AttributeError:
 			children = self._children = list(super()._get_children())
 		return children
+	def neighbour(self, offset):
+		siblings = list(self.parent.children)
+		return siblings[siblings.index(self)+offset]
+	@property
+	def successor(self):
+		return self.neighbour(+1)
+	@property
+	def predecessor(self):
+		return self.neighbour(-1)
 
 class MageFSNode(BackportNode):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		global debug_index
 		debug_index = debug_index + 1 # Warning if too many Mages are being loaded
-		input("Loading {}".format(self.path))
+		#input("Loading {}".format(self.path))
 		if self.isfile:
 			image = pygame.image.load(self.path).convert()
 		else:
