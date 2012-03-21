@@ -31,12 +31,12 @@ class BackportNode(enigraph.fsnode.FSNode):
 			self.not_my_child(favourite_child)
 	def _get_children(self):
 		try:
-			children = self._children #AARGH
+			children = self._children #TODO: Better subclass CachedChildrenNode
 		except AttributeError:
 			children = self._children = list(super()._get_children())
 		return children
 	def neighbour(self, offset):
-		siblings = list(self.parent.children)
+		siblings = self.parent.children
 		return siblings[siblings.index(self)+offset]
 	@property
 	def successor(self):
