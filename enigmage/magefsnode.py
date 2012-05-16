@@ -11,7 +11,7 @@ import enigraph, enigraph.fsnode
 
 debug_index = 0
 
-class BackportNode(enigraph.fsnode.FSNode):
+class BackportNode(enigraph.BaseNode):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self._favourite_child = None
@@ -45,7 +45,7 @@ class BackportNode(enigraph.fsnode.FSNode):
 	def predecessor(self):
 		return self.neighbour(-1)
 
-class MageFSNode(BackportNode):
+class MageFSNode(BackportNode, enigraph.fsnode.FSNode):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		global debug_index
