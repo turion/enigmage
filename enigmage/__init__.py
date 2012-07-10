@@ -381,5 +381,11 @@ class RamificationMages(Mages):
 			for node_index, node in enumerate(below):
 				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery + (1+node_index) * (THUMB_HEIGHT + THUMB_SEPARATOR)))
 
+class LineMages(RamificationMages):
+	def relevant_nodes(self):
+		return list(self.central_node.children)
+	def _sub_line(self, node, offset):
+		node.data.goto((offset+self.drawrect.centerx,self.drawrect.centery)) 
+
 class TreeMages(Mages):
 	pass
