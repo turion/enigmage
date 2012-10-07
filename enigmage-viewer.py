@@ -3,7 +3,7 @@
 
 
 import enigraph
-import enigmage, enigmage.magefsnode
+import enigmage, enigmage.magefsnode, enigmage.interface
 
 enigmage.init()
 
@@ -17,21 +17,13 @@ meinesprites = enigmage.RamificationMages(scrambled_eggs)
 
 enigmage.var.tick()
 loopcount = 0
-import pygame # TODO Die Mainloop muss noch irgendwohin
+import pygame # TODO: Separate layout and graphics by defining an abstract layout.group. At last, modularise the main loop
 while True:
 	enigmage.var.tick()
 	if enigmage.var.time > 1000:
 		print("Delay in loop ", loopcount, ":", enigmage.var.time)
 	loopcount += 1
-	for event in pygame.event.get():
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_ESCAPE: exit()
-			if event.key == pygame.K_RIGHT: meinesprites.focus_successor()
-			if event.key == pygame.K_LEFT: meinesprites.focus_predecessor()
-			if event.key == pygame.K_DOWN: meinesprites.zoom_in()
-			if event.key == pygame.K_UP: meinesprites.zoom_out()
-	# events.pump oder so?
-	keys = pygame.key.get_pressed()
+	enigmage.interface.handle_events(meinesprites)
 	meinesprites.clear(enigmage.graphics.backend.screen,enigmage.graphics.backend.background)
 	meinesprites.update()
 	meinesprites.draw(enigmage.graphics.backend.screen) # dirtyrects = meinesprites.draw(enigmage.graphics.backend.screen)

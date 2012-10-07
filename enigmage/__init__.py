@@ -30,9 +30,10 @@ def init(**kwargs):
 	global current_settings
 	current_settings = return_settings() # TODO: Keine ideale Nomenklatur, da das Modul auch schon so heißt
 	graphics.init(fullscreen=current_settings.fullscreen, **kwargs)
+	interface.init()
 	return True
 
-from . import graphics
+from . import graphics, interface
 
 class Mages(pygame.sprite.LayeredUpdates):
 	"""Inherits LayeredUpdate. Inherited classes display the mages that are found in the tree rooted at central_node in a specific way."""
