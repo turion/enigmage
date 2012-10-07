@@ -3,18 +3,11 @@
 
 """enigmage"""
 
-
 __ALL__ = [ 'directory' ]
 
 import pygame, math
 import enigraph
 
-#def main(bildname):
-
-
-
-def halleluja():
-	print("Hallojulia!")
 
 class Var():
 	"""Holds various important global variables for the whole enigmage"""
@@ -33,12 +26,13 @@ class Var():
 def init(**kwargs):
 	global var
 	var = Var()
-	graphics.init(**kwargs)
+	from .settings import return_settings
+	global current_settings
+	current_settings = return_settings() # TODO: Keine ideale Nomenklatur, da das Modul auch schon so heißt
+	graphics.init(fullscreen=current_settings.fullscreen, **kwargs)
 	return True
 
 from . import graphics
-#Mage = graphics.backend.Mage # TODO Diese Zeile löschen wenn es ohne sie geht
-
 
 class Mages(pygame.sprite.LayeredUpdates):
 	"""Inherits LayeredUpdate. Inherited classes display the mages that are found in the tree rooted at central_node in a specific way."""
