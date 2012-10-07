@@ -18,17 +18,10 @@ def halleluja():
 
 class Var():
 	"""Holds various important global variables for the whole enigmage"""
-	def __init__(self, screen = None):
-		if screen == None:
-			size = 800, 600
-			self.screen = pygame.display.set_mode(size)
-		else: self.screen = screen
-		self.background = pygame.Surface(self.screen.get_size()).convert()
-		self.background.fill((0,0,0))
+	def __init__(self):
 		self._ticking = 0
-		self.background = pygame.Surface(self.screen.get_size()).convert()
-		self.background.fill((0,0,0))
-		self.screen_rect = self.screen.get_rect()
+		self.time = 0
+		self.done = 0
 	def tick(self): # Könnte man noch beschleunigen, indem man in der Laufzeit tick umdefiniert/umbindet
 		if self._ticking:
 			self.time = self.clock.tick(40)
@@ -36,29 +29,29 @@ class Var():
 			self._ticking = 1
 			self.clock = pygame.time.Clock()
 			self.time = 0
-	time = 0
-	done = 0
 
-def init(screen):
+def init(**kwargs):
 	global var
-	var = Var(screen)
+	var = Var()
+	graphics.init(**kwargs)
 	return True
 
 from . import graphics
-graphics.init()
-Mage = graphics.backend.Mage
+#Mage = graphics.backend.Mage # TODO Diese Zeile löschen wenn es ohne sie geht
 
 
 class Mages(pygame.sprite.LayeredUpdates):
 	"""Inherits LayeredUpdate. Inherited classes display the mages that are found in the tree rooted at central_node in a specific way."""
-	def __init__(self, drawrect, node):
+	def __init__(self, central_node, drawrect=None):
 		"""node has to be enigraph.Node and contain enigmage.Mage as data."""
 		pygame.sprite.LayeredUpdates.__init__(self) # Die Mage werden von calculate_positions eingewiesen
+		if drawrect == None:
+			drawrect = graphics.backend.screen.get_rect()
 		self.drawrect = drawrect
 
 		self._focussed_child = 0
 		self._central_node = None
-		self.central_node = node
+		self.central_node = central_node
 
 		self.add_mages()
 		self.calculate_positions() # Sprites zur Gruppe hinzufügen, Positionen berechnen, die in drawrect reinpassen
@@ -145,7 +138,7 @@ class RamificationMages(Mages):
 	def relevant_nodes(self):
 		return [self.central_node] + list(self.central_node.progeny(generations=2))
 	def _main_line(self):
-		#main_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible	
+		#main_place_count = (self.drawrect.width - graphics.THUMB_WIDTH - 2 * graphics.THUMB_SEPARATOR) / (graphics.THUMB_WIDTH + graphics.THUMB_SEPARATOR) # Might become useful when only drawing the visible	
 		if self.central_node.children:
 			above = self.central_node.children[self._focussed_child+1:]
 			middle = self.central_node.children[self._focussed_child]
@@ -154,12 +147,12 @@ class RamificationMages(Mages):
 			#~ print 'Mainline of ', self.central_node, ': Above: ', [str(node) for node in above], ' Middle: ', middle, ' Below: ', [str(node) for node in below]
 			self._sub_line(middle, 0)
 			for node_index, node in enumerate(above): # enumerate(above) + enumerate(-1, below)
-				self._sub_line(node, (1+node_index) * (THUMB_WIDTH + THUMB_SEPARATOR))
+				self._sub_line(node, (1+node_index) * (graphics.THUMB_WIDTH + graphics.THUMB_SEPARATOR))
 			for node_index, node in enumerate(below):
-				self._sub_line(node, -(1+node_index) * (THUMB_WIDTH + THUMB_SEPARATOR))
+				self._sub_line(node, -(1+node_index) * (graphics.THUMB_WIDTH + graphics.THUMB_SEPARATOR))
 	update_positions = _main_line
 	def _sub_line(self, node, offset):
-		#sub_place_count = (self.drawrect.width - THUMB_WIDTH - 2 * THUMB_SEPARATOR) / (THUMB_WIDTH + THUMB_SEPARATOR) # Might become useful when only drawing the visible
+		#sub_place_count = (self.drawrect.width - graphics.THUMB_WIDTH - 2 * graphics.THUMB_SEPARATOR) / (graphics.THUMB_WIDTH + graphics.THUMB_SEPARATOR) # Might become useful when only drawing the visible
 		# Favourite child in die Mitte, ansonsten Mitte nach oben
 		if node.favourite_child:
 			self.remove(node.data)
@@ -176,9 +169,9 @@ class RamificationMages(Mages):
 		if middle:
 			middle.data.goto((offset+self.drawrect.centerx,self.drawrect.centery)) 
 			for node_index, node in enumerate(above):
-				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery - (1+node_index) * (THUMB_HEIGHT + THUMB_SEPARATOR)))
+				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery - (1+node_index) * (graphics.THUMB_HEIGHT + graphics.THUMB_SEPARATOR)))
 			for node_index, node in enumerate(below):
-				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery + (1+node_index) * (THUMB_HEIGHT + THUMB_SEPARATOR)))
+				node.data.goto((offset+self.drawrect.centerx, self.drawrect.centery + (1+node_index) * (graphics.THUMB_HEIGHT + graphics.THUMB_SEPARATOR)))
 
 class LineMages(RamificationMages):
 	def relevant_nodes(self):

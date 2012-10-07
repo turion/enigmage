@@ -8,6 +8,24 @@ def scale_surface_to_size(image, dimensions):
 	return pygame.transform.scale(image, dimensions)
 
 from ..graphics import fit_surface_to_thumb, fit_surface_to_size
+from .. import var #TODO Das ist nur für die Physik, die ihre eigene Zeitzählung mitbringen sollte
+
+def init(existing_screen=None, fullscreen=False):
+	pygame.init()
+	global screen, background
+	if existing_screen == None:
+		if fullscreen:
+			screen_size = 1024, 768
+		else:
+			screen_size = 800, 600
+		screen = pygame.display.set_mode(screen_size, fullscreen and pygame.FULLSCREEN or 0)
+	else:
+		screen = existing_screen
+	background = pygame.Surface(screen.get_size()).convert()
+	background.fill((0,0,0))
+	background = pygame.Surface(screen.get_size()).convert() # FIXME Wieso muss man das zweimal machen?
+	background.fill((0,0,0))
+
 
 class Mage(pygame.sprite.Sprite):
 	"""enigmage Image handler"""
@@ -40,7 +58,7 @@ class Mage(pygame.sprite.Sprite):
 		
 		self._raw_image = raw_image
 		if drawrect == None:
-			drawrect = var.screen_rect
+			drawrect = screen.get_rect()
 		self.assign_drawrect(drawrect)
 
 		try:

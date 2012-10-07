@@ -1,78 +1,12 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
-enigmage-viewer.py
- 
-Das eigentliche Programm
-
-Bereits geschafft:
-1.Sprites ausprobieren
-	Event loop, verwende gescheites timing
-2.Bilder verschieben
-3a Mage
-	Bewegung flüssig mit target und friction
-	Zoom in/Zoom out bzw. Fullscreen/Thumb
-3b. Mehrere Bilder gleichzeitig
-	Eigene Gruppe
-4z. Nodes statt:
-	Virtuelle Verzeichnisse, MageDirectory Klasse
-		aktives Verzeichnis mit Grundfunktionen zur Kommunikation mit einer Bildschirmgruppe
-
-Aktuell:
-
-4a. Dateiverwaltung
-	Via Nodes...
-		Unterklassen davon, die tatsächlich etwas können, z.B. SQL, Dateisystem
-			"SQLMageNode" oder so durch und durch Objektorientiert
-				SQL-Daten nicht in data ablegen wegen Seit-/Abwärtskompatibilität
-				Alchemy richtig in den Griff kriegen
-		Selbstständiger DirectoryNode
-		Davon eine Unterklasse, die automatisch die Mages lädt?
-			Es fehlt noch Schreibzugriff
-
-7. Performance verbessern
-		Multithreading
-			Hintergrundprozess, der Thumbs erstellt und Bilder vorlädt usw.
-				Den braucht man jetzt schon, damit es benutzbar wird
-		Nur die Mages anzeigen, die im Bildbereich sind!
-			Am besten diese Funktion schon in Mages einbauen? Das wird kompliziert!
-
-
-Noch zu tun:
-4a. Dateiverwaltung
-4b. SQL
-		Tags
-			Nicht nur Baumstruktur, sondern Mitgliedschaft in mehreren Gruppen via hierarchischer Tags
-			Hierarchie der Tags über tag_hierarchy ist mengenartig (ein Tag kann mehrere Übertags haben) und ausschließlich direkt (nicht transitiv: Tag3 Übertag für Tag2 und Tag 2 Übertag für Tag1 führt nicht dazu, dass Tag3 Übertag für Tag1. Man kann diese Struktur aber trotzdem baumartig benutzen.)
-			Tagzugehörigkeit wird durch Coupling quantifiziert
-				Rating geschieht durch Tags (z.B. tag "kalenderhaft", "gut", "überbelichtet") und coupling
-5. Alles zusammenstecken
-		Gedanken wegen Packages machen, vielleicht main() implementieren
-		Einstellungsdatei ausbauen
-			Die Einstellungsdatei sollte eine normale Pythondatei sein, die auf globale Variablen in enigmage-viewer.py zugreifen kann
-6. Praktische Funktionen einbauen/ Eyecandy
-		"Einsortieren": Zwei Gruppen, eine links im halben Fullscreen die neuen Fotos durchblätternd, die rechts in einen Baum einsortiert werden
-		MageLabelled
-		LayeredUpdates anstatt Group verwenden um Überlappungen in den Griff zu bekommen
-		Baumartige Gruppen
-		Dateien nicht nur lesen, sondern auch schreiben
-7. Performance verbessern
-		Mages nur einmal laden, Überprüfung durch Gruppenzugehörigkeit
-		Bilder außerhalb der Sichtbereiches nicht zeichnen
-		DirtyRects
-		done
-		Multithreading
-			Hintergrundprozess, der Thumbs erstellt und Bilder vorlädt usw.
-8. OpenGL-Backend
-"""
 
 import enigraph
 import enigmage, enigmage.magefsnode
 
-import os, sys, pygame, pygame.sprite
+import os, sys
 
-pygame.init()
 
 os.chdir('/')
 dir = os.path.expanduser('~') + '/Fotos/selection enigmage/'
@@ -80,31 +14,25 @@ settings_file_path = os.path.join(dir, '.enigmage')
 if os.path.exists(settings_file_path):
 	if os.path.isfile(settings_file_path):
 		with open(settings_file_path) as settings_file:
-			dir = settings_file.readline()[:-1]
+			dir = settings_file.readline()[:-1] # TODO Da gibt es doch bessere Wege, eine Einstellungsdatei auszulesen
 			fullscreen = settings_file.readline()
 	else:
 		print("You messed up with .enigmage!")
-		fullscreen = "no"
+		fullscreen = False
 else:
 	print("Please create .enigmage!")
-	fullscreen = "no"
+	fullscreen = False
 	
 
-maxbildversize = 300
+#maxbildversize = 300 # TODO was sollte das?
 
-if fullscreen == 'yes':
-	size = 1024, 768
-	screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
-else:
-	size = 800, 600
-	screen = pygame.display.set_mode(size)
 
-enigmage.init(screen)
+enigmage.init(fullscreen=fullscreen)
 
 scrambled_eggs = enigmage.magefsnode.MageFSNode(dir)
 
 
-meinesprites = enigmage.RamificationMages(screen.get_rect(), scrambled_eggs)
+meinesprites = enigmage.RamificationMages(scrambled_eggs)
 #~ FIX:
 	#~ When zooming in to fast, Mage does not immediately stop
 	#~ On zooming out, the Node forgets about which children it came from
@@ -125,7 +53,7 @@ while True:
 			if event.key == pygame.K_UP: meinesprites.zoom_out()
 	# events.pump oder so?
 	keys = pygame.key.get_pressed()
-	meinesprites.clear(enigmage.var.screen,enigmage.var.background)
+	meinesprites.clear(enigmage.graphics.backend.screen,enigmage.graphics.backend.background)
 	meinesprites.update()
-	meinesprites.draw(enigmage.var.screen) # dirtyrects = meinesprites.draw(var.screen)
+	meinesprites.draw(enigmage.graphics.backend.screen) # dirtyrects = meinesprites.draw(var.screen)
 	pygame.display.flip() # pygame.display.update(dirtyrects)

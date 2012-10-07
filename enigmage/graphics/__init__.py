@@ -8,10 +8,11 @@ THUMB_SEPARATOR = 30 # Pixels between two thumbs
 
 backend = None
 
-def init():
+def init(**kwargs):
 	from . import pygame
 	global backend
 	backend = pygame
+	backend.init(**kwargs)
 # Other backends to follow
 
 def scale_surface_to_height(image, height):
