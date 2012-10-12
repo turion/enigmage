@@ -52,9 +52,13 @@ class MageFSNode(BackportNode, enigraph.fsnode.FSNode):
 		debug_index = debug_index + 1 # Warning if too many Mages are being loaded
 		#input("Loading {}".format(self.path))
 		if self.isfile:
-			image = pygame.image.load(self.path).convert()
+			try:
+				image = pygame.image.load(self.path).convert()
+			except pygame.error as e: # TODO: child_accepted should be used somehow to determine which files should be actually loaded
+				#raise IOError("Couldn't load image file {}".format(self.path)) from e
+				image = pygame.image.load('/usr/share/icons/oxygen/256x256/categories/applications-engineering.png').convert()
 		else:
-			image = pygame.image.load('/usr/share/icons/oxygen/48x48/places/folder.png').convert()
+			image = pygame.image.load('/usr/share/icons/oxygen/256x256/places/folder.png').convert()
 		mage = enigmage.graphics.backend.Mage(image, title=self.path)
 		if debug_index > 100:
 			#~ raise Exception
@@ -62,7 +66,7 @@ class MageFSNode(BackportNode, enigraph.fsnode.FSNode):
 		self.data = mage
 	def child_accepted(self, child_path): # FIXME
 		full_child_path = os.path.join(self.path, child_path)
-		return enigtree.directory.DirNode.child_accepted(self, child_path) and ( os.path.isdir(full_child_path) or (os.path.isfile(full_child_path) and child_path[-4:] in ('.JPG', '.jpg', 'jpeg', 'JPEG')) )
+		return super().child_accepted(self, child_path) and ( os.path.isdir(full_child_path) or (os.path.isfile(full_child_path) and child_path[-4:] in ('.JPG', '.jpg', 'jpeg', 'JPEG')) )
 	def sort_childs(self): # FIXME
 		childs_dirs = [child for child in self._childs if child.isdir]
 		childs_files = [child for child in self._childs if child.isfile]
