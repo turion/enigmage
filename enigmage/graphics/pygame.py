@@ -23,8 +23,6 @@ def init(existing_screen=None, fullscreen=False):
 		screen = existing_screen
 	background = pygame.Surface(screen.get_size()).convert()
 	background.fill((0,0,0))
-	background = pygame.Surface(screen.get_size()).convert() # FIXME Wieso muss man das zweimal machen?
-	background.fill((0,0,0))
 
 
 class Mage(pygame.sprite.Sprite):
