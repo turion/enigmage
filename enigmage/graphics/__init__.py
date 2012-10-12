@@ -36,3 +36,16 @@ def fit_surface_to_size(image, dimensions):
 def fit_surface_to_thumb(image, dimensions=(None, None)):
 	"""Creates a thumb from a surface. The height of the thumb is THUMB_HEIGHT. More sophisticated features are likely to be added."""
 	return fit_surface_to_size(image, (THUMB_WIDTH, THUMB_HEIGHT))
+
+import abc
+class Group(metaclass=abc.ABCMeta):
+	@abc.abstractmethod
+	def empty(self):
+		pass
+	@abc.abstractmethod
+	def add(self):
+		pass
+	@abc.abstractmethod
+	def remove(self):
+		pass
+		

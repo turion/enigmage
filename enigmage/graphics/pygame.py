@@ -188,3 +188,7 @@ class Mage(pygame.sprite.Sprite):
 		else:
 			#print "Becoming fullscreen"
 			self.become_fullscreen()
+
+from .. import graphics
+class Group(pygame.sprite.LayeredUpdates, graphics.Group):
+	pass
