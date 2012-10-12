@@ -24,16 +24,14 @@ def init(existing_screen=None, fullscreen=False):
 	background = pygame.Surface(screen.get_size()).convert()
 	background.fill((0,0,0))
 
+from .. import physics
 
 class Mage(pygame.sprite.Sprite):
 	"""enigmage Image handler"""
-	_movestep = 10.0
+	_movestep = 10.0 # TODO Das alles sollten keine Klassenattribute sein
 	_velstep = 0.1
-	_move = 0.0+0.0j
-	_velocity = 0.0+0.0j
-	_goingto = False
-	_target = 0.0+0.0j
 	_drawrect = None
+	_target = 0.0 + 0.0j
 	#_blowing = 0.0
 	#_blowheight = 0
 	_show_as_fullscreen = False
@@ -70,6 +68,7 @@ class Mage(pygame.sprite.Sprite):
 			self.become_fullscreen()
 		else: # Supposed to be shown as a thumb
 			self.become_thumb()
+		self.physics_model = physics.backend.Model(self)
 	def assign_image(self, image, rect=None):
 		"""Has to be called before the mage can be shown or the rect of it accessed. Might include a clipping rect in the future."""
 		if rect == None: rect = image.get_rect()
@@ -78,7 +77,7 @@ class Mage(pygame.sprite.Sprite):
 	def assign_drawrect(self, drawrect):
 		self._drawrect = drawrect
 		self.fullscreen = fit_surface_to_size(self._raw_image, (self._drawrect.width, self._drawrect.height))
-	def right(self):
+	def right(self): # FIXME
 		self._velocity += self._velstep
 	def left(self):
 		self._velocity -= self._velstep
@@ -86,14 +85,6 @@ class Mage(pygame.sprite.Sprite):
 		self._velocity -= self._velstep * 1.0j
 	def down(self):
 		self._velocity += self._velstep * 1.0j
-	#def right(self): # 10 Pixel pro Tastendruck
-		#self._move += self._movestep
-	#def left(self):
-		#self._move -= self._movestep
-	#def up(self):
-		#self._move -= self._movestep * 1.0j
-	#def down(self):
-		#self._move += self._movestep * 1.0j
 	def _movetarget(self, dimensions):
 		(target_x, target_y) = dimensions
 		self._target = target_x + target_y * 1.0j
@@ -114,46 +105,11 @@ class Mage(pygame.sprite.Sprite):
 		(target_x, target_y) = dimensions
 		try:
 			self._movetarget((target_x, target_y))
-			self._goingto = True
+			self.physics_model._goingto = True
 		except TypeError:
-			print("Bad Parameters for Mage.goto((target_x,target_y))") # In this case, self._goingto is left untouched
-	def _attraction(self):
-		strength = 0.00003
-
-		#weak_scale = 10 # Pixels
-		#anharmonicity = + 0.000005		
-		#bumpsize = 30 # Pixels
-		#bumpheight = 0
-		
-		snap = 2 # Pixels
-		distance = self._target - (self.rect.centerx + 
-		self.rect.centery * 1.0j)
-		#self._velocity += strength * distance * math.atan(abs(distance)/weak_scale) / (0.0001 + abs(distance))
-		#print (1 + anharmonicity * (abs(distance)**2))
-		#self._velocity += var.time * strength * distance * (1 + anharmonicity * (abs(distance)**2))
-		#self._velocity += var.time * strength * distance * (1 + bumpheight / (1 + (abs(distance)/bumpsize)**2))
-		self._velocity += var.time * strength * distance
-		if abs(distance) < snap:
-			self._goingto = False
-			#print "Went to"
-	def _friction(self):
-		overall_friction = 0.003
-		ground_friction = 1
-		air_friction = 2
-		self._velocity -= var.time * overall_friction * self._velocity * (air_friction + ground_friction/(1+abs(self._velocity)))
+			print("Bad Parameters for Mage.goto((target_x,target_y))") # In this case, self.physics_model._goingto is left untouched
 	def update(self):
-		debugstring = str(self) + ' bei ' + str(self.rect.center) + ' v=' + str(self._velocity)
-		if not self._show_as_fullscreen: # Doing the physics for the thumb moving
-			if self._goingto:
-				self._attraction()
-				debugstring += ' v+adt=' + str(self._velocity)
-			self._friction()
-			debugstring += ' v+fdt=' + str(self._velocity) + ' dt=' + str(var.time)
-			self._move += self._velocity*var.time
-			self.rect = self.rect.move(int(round(self._move.real)),int(round(self._move.imag)))
-			self._move -= int(round(self._move.real)) + int(round(self._move.imag))*1j
-			#if self._goingto: print debugstring
-			#if self._blowing: self._blowstep()
+		self.rect = self.rect.move(*self.physics_model.update())
 	#def _blowstep(self):
 		#"""For a smooth scaling. Costs to much resources in SDL, but likely to be implemented in OpenGL."""
 		#blowingspeed = 1.0 / 1000 # First number in seconds

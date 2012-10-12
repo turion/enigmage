@@ -23,7 +23,7 @@ class Var():
 			self.clock = pygame.time.Clock()
 			self.time = 0
 
-from . import graphics, interface, layout
+from . import graphics, interface, layout, physics
 
 def init(**kwargs):
 	global var
@@ -33,6 +33,7 @@ def init(**kwargs):
 	current_settings = return_settings() # TODO: Keine ideale Nomenklatur, da das Modul auch schon so heißt
 	graphics.init(fullscreen=current_settings.fullscreen, **kwargs)
 	interface.init()
+	physics.init()
 	return True
 
 DefaultLayout = layout.Ramification
