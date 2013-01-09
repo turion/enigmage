@@ -3,7 +3,7 @@
 
 
 import enigraph
-import enigmage, enigmage.magefsnode, enigmage.interface
+import enigmage, enigmage.magefsnode, enigmage.interface, enigmage.graphics
 
 enigmage.init()
 
@@ -17,7 +17,7 @@ meinesprites = enigmage.DefaultLayout(scrambled_eggs)
 
 enigmage.var.tick()
 loopcount = 0
-import pygame # TODO: Separate layout and graphics by defining an abstract layout.group. At last, modularise the main loop
+# TODO: Modularise the main loop
 while True:
 	enigmage.var.tick()
 	if enigmage.var.time > 1000:
@@ -26,7 +26,5 @@ while True:
 	enigmage.interface.handle_events(meinesprites)
 	meinesprites.group.clear(enigmage.graphics.backend.screen,enigmage.graphics.backend.background)
 	meinesprites.group.update()
-	meinesprites.group.draw(enigmage.graphics.backend.screen)
-	# dirtyrects = meinesprites.group.draw(enigmage.graphics.backend.screen)
-	pygame.display.flip()
-	# pygame.display.update(dirtyrects)
+	dirty_rects = meinesprites.group.draw(enigmage.graphics.backend.screen)
+	enigmage.graphics.backend.flip_display(dirty_rects)

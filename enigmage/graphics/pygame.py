@@ -148,3 +148,7 @@ class Mage(pygame.sprite.Sprite):
 from .. import graphics
 class Group(pygame.sprite.LayeredUpdates, graphics.Group):
 	pass
+
+def flip_display(dirty_rects):
+	pygame.display.flip()
+	# pygame.display.update(dirtyrects)
